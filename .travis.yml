@@ -1,0 +1,18 @@
+language: java
+sudo: true
+
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+
+jobs:
+  include:
+  - stage: build vaunt-generator with gradle
+    script:
+    - cd vaunt-generator
+    - ./gradlew clean build
+  - stage: build vaunt-validator with gradle
+    script:
+      - cd vaunt-validator
+      - ./gradlew clean build
