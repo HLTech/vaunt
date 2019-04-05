@@ -1,5 +1,6 @@
 # Vaunt
 
+[![Build Status](https://travis-ci.org/HLTech/vaunt.svg?branch=master)](https://travis-ci.org/HLTech/vaunt)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
