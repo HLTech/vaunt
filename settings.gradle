@@ -1,0 +1,5 @@
+include ':vaunt-generator'
+project(":vaunt-generator").projectDir = file("./vaunt-generator")
+
+include ':vaunt-validator'
+project(":vaunt-validator").projectDir = file("./vaunt-validator")
