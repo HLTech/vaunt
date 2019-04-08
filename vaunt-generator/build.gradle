@@ -1,22 +1,7 @@
 group = 'com.hltech'
 version = '1.0-SNAPSHOT'
 
-buildscript {
-    ext {
-        repos = {
-            gradlePluginPortal()
-            mavenLocal()
-            mavenCentral()
-        }
-        coverallsVersion = '2.8.2'
-    }
-    repositories (repos)
-    dependencies {
-        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
-    }
+task wrapper(type: Wrapper) {
+    jarFile = "../gradle/wrapper/gradle-wrapper.jar"
+    scriptFile = "../gradlew"
 }
-
-repositories(repos)
-
-apply plugin: 'java'
-apply from: 'gradle/codequality.gradle'
