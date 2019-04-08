@@ -1,6 +1,7 @@
 # Vaunt
 
 [![Build Status](https://travis-ci.org/HLTech/vaunt.svg?branch=master)](https://travis-ci.org/HLTech/vaunt)
+[![Coverage Status](https://coveralls.io/repos/github/HLTech/vaunt/badge.svg?branch=master)](https://coveralls.io/github/HLTech/vaunt?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
@@ -23,4 +24,4 @@ This repository contains toolkit to define and validate contracts in JMS
 
 ## License <a name="License"></a>
 
-pact-gen is [MIT licensed](./LICENSE).
+vaunt is [MIT licensed](./LICENSE).
