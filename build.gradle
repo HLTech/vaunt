@@ -5,6 +5,8 @@ buildscript {
             mavenLocal()
             mavenCentral()
         }
+        groovyAllVersion = '2.4.13'
+        spockVersion = '1.1-groovy-2.4'
         coverallsVersion = '2.8.2'
     }
     repositories (repos)
@@ -13,20 +15,53 @@ buildscript {
     }
 }
 
-subprojects {
-    apply plugin: 'java'
-    apply from: '../gradle/codequality.gradle'
+allprojects {
+    repositories (repos)
 
-    buildscript {
-        ext {
-            repos = {
-                gradlePluginPortal()
-                mavenLocal()
-                mavenCentral()
-            }
-        }
-        repositories (repos)
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'com.github.kt3k.coveralls'
+
+    jacoco {
+        toolVersion = "0.8.1"
     }
 
-    repositories(repos)
+    checkstyle {
+        toolVersion "8.1"
+    }
+}
+
+subprojects {
+    dependencies {
+        testCompile "org.spockframework:spock-core:$spockVersion"
+        testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = true
+            html.enabled = true
+        }
+    }
+}
+
+coveralls {
+    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+}
+
+task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+    dependsOn = subprojects.test
+
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
 }

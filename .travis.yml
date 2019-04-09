@@ -8,6 +8,6 @@ cache:
 
 jobs:
   include:
-  - stage: build vaunt-generator with gradle & generate reports
+  - stage: build vaunt with gradle & generate reports
     script:
-    - ./gradlew clean build jacocoTestReport coveralls
+    - ./gradlew clean build jacocoRootReport coveralls
