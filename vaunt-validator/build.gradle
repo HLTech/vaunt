@@ -5,3 +5,12 @@ task wrapper(type: Wrapper) {
     jarFile = "../gradle/wrapper/gradle-wrapper.jar"
     scriptFile = "../gradlew"
 }
+
+sourceSets {
+    test.groovy.srcDirs(
+            "src/test/unit",
+            "src/test/integration",
+            "src/test/functional",
+            "src/test/commons"
+    )
+}
