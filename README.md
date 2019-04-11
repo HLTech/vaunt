@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/HLTech/vaunt.svg?branch=master)](https://travis-ci.org/HLTech/vaunt)
 [![Coverage Status](https://coveralls.io/repos/github/HLTech/vaunt/badge.svg?branch=master)](https://coveralls.io/github/HLTech/vaunt?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/HLTech/vaunt/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/HLTech/vaunt/?branch=master)
 
 ## Table of Contents
 1. [**Overview**](#Overview)
