@@ -1,6 +1,16 @@
 group = 'com.hltech'
 version = '1.0-SNAPSHOT'
 
+buildscript {
+    ext {
+        jsonSchemaVersion = '2.7.4'
+    }
+}
+
+dependencies {
+    compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jsonSchemaVersion"
+}
+
 task wrapper(type: Wrapper) {
     jarFile = "../gradle/wrapper/gradle-wrapper.jar"
     scriptFile = "../gradlew"
