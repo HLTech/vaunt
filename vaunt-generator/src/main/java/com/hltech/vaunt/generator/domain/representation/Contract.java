@@ -1,4 +1,4 @@
-package com.hltech.vaunt.generator.domain;
+package com.hltech.vaunt.generator.domain.representation;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import lombok.Data;
