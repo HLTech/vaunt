@@ -1,4 +1,4 @@
-package com.hltech.vaunt.generator.domain.representation;
+package com.hltech.vaunt.generator.domain.representation.model;
 
 import lombok.Data;
 
