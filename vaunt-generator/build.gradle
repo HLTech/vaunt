@@ -3,12 +3,12 @@ version = '1.0-SNAPSHOT'
 
 buildscript {
     ext {
-        jsonSchemaVersion = '2.7.4'
+        reflectionsVersion = '0.9.11'
     }
 }
 
 dependencies {
-    compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jsonSchemaVersion"
+    compile "org.reflections:reflections:$reflectionsVersion"
 }
 
 task wrapper(type: Wrapper) {

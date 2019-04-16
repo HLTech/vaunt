@@ -9,6 +9,7 @@ buildscript {
         spockVersion = '1.1-groovy-2.4'
         coverallsVersion = '2.8.2'
         lombokVersion = '1.16.18'
+        jacksonVersion = '2.9.8'
     }
     repositories (repos)
     dependencies {
@@ -37,6 +38,9 @@ allprojects {
 subprojects {
     dependencies {
         compile "org.projectlombok:lombok:$lombokVersion"
+        compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+        compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
+        
         testCompile "org.spockframework:spock-core:$spockVersion"
         testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
     }
