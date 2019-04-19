@@ -33,7 +33,7 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts
             service.capabilities.contracts[0].destinationName == 'destination'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body == jsonSchemaGenerator.generateSchema(SampleProviderMessage.class)
+            service.capabilities.contracts[0].body == jsonSchemaGenerator.generateSchema(SampleProviderMessage)
 
         and: 'Expectations are as expected'
             service.expectations
@@ -44,6 +44,6 @@ class RepresentationExtractorSpec extends Specification {
             def providerContract = service.expectations.providerNameToContracts.get('provider')[0]
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'destination'
-            providerContract.body == jsonSchemaGenerator.generateSchema(SampleConsumerMessage.class)
+            providerContract.body == jsonSchemaGenerator.generateSchema(SampleConsumerMessage)
     }
 }
