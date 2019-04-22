@@ -18,9 +18,6 @@ task wrapper(type: Wrapper) {
 
 sourceSets {
     test.groovy.srcDirs(
-            "src/test/unit",
-            "src/test/integration",
-            "src/test/functional",
-            "src/test/commons"
+            "src/test/groovy"
     )
 }
