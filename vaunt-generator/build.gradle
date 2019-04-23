@@ -11,7 +11,7 @@ dependencies {
     compile "org.reflections:reflections:$reflectionsVersion"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
 
-    testCompile 'com.jayway.jsonpath:json-path-assert:2.2.0'
+    testCompile "com.jayway.jsonpath:json-path-assert:$jsonPathAssertVersion"
 }
 
 task wrapper(type: Wrapper) {
