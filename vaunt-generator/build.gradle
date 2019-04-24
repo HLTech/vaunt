@@ -8,6 +8,8 @@ buildscript {
 }
 
 dependencies {
+    compile project(':vaunt-core')
+    
     compile "org.reflections:reflections:$reflectionsVersion"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
 

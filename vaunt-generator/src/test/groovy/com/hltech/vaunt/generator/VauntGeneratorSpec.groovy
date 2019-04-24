@@ -1,8 +1,8 @@
 package com.hltech.vaunt.generator
 
+import com.hltech.vaunt.core.domain.model.Service
 import com.hltech.vaunt.generator.domain.representation.RepresentationExtractor
 import com.hltech.vaunt.generator.domain.representation.RepresentationWriter
-import com.hltech.vaunt.generator.domain.representation.model.Service
 import spock.lang.Specification
 import spock.lang.Subject
 

@@ -8,8 +8,6 @@ buildscript {
 }
 
 dependencies {
-    compile project(':vaunt-core')
-    
     compile "com.google.guava:guava:$guavaVersion"
 }
 

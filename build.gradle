@@ -64,12 +64,14 @@ coveralls {
 }
 
 task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
-    dependsOn = subprojects.test
+    def testableSubprojects = subprojects.findAll {it.name != 'vaunt-core'}
 
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories =  files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    dependsOn = testableSubprojects.test
+
+    additionalSourceDirs = files(testableSubprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(testableSubprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories =  files(testableSubprojects.sourceSets.main.output)
+    executionData = files(testableSubprojects.jacocoTestReport.executionData)
     
     reports {
         xml.enabled = true

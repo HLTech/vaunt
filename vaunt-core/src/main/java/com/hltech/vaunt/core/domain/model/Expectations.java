@@ -1,4 +1,4 @@
-package com.hltech.vaunt.generator.domain.representation.model;
+package com.hltech.vaunt.core.domain.model;
 
 import com.google.common.collect.Multimap;
 import lombok.Data;

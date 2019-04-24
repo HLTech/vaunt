@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Lists
-import com.hltech.vaunt.validator.domain.representation.model.Capabilities
-import com.hltech.vaunt.validator.domain.representation.model.Contract
-import com.hltech.vaunt.validator.domain.representation.model.DestinationType
-import com.hltech.vaunt.validator.domain.representation.model.Expectations
-import com.hltech.vaunt.validator.domain.representation.model.Service
+import com.hltech.vaunt.core.domain.model.Capabilities
+import com.hltech.vaunt.core.domain.model.Contract
+import com.hltech.vaunt.core.domain.model.DestinationType
+import com.hltech.vaunt.core.domain.model.Expectations
+import com.hltech.vaunt.core.domain.model.Service
 import spock.lang.Specification
 import spock.lang.Subject
 

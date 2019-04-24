@@ -1,7 +1,7 @@
 package com.hltech.vaunt.validator;
 
-import com.hltech.vaunt.validator.domain.representation.model.Contract;
-import com.hltech.vaunt.validator.domain.representation.model.Service;
+import com.hltech.vaunt.core.domain.model.Contract;
+import com.hltech.vaunt.core.domain.model.Service;
 
 import java.util.List;
 import java.util.Optional;
