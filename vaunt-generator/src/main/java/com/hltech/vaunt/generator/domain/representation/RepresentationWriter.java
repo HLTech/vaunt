@@ -1,7 +1,7 @@
 package com.hltech.vaunt.generator.domain.representation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hltech.vaunt.generator.domain.representation.model.Service;
+import com.hltech.vaunt.core.domain.model.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

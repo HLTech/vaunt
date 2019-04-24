@@ -1,4 +1,4 @@
-package com.hltech.vaunt.validator.domain.representation.model;
+package com.hltech.vaunt.core.domain.model;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import lombok.Data;

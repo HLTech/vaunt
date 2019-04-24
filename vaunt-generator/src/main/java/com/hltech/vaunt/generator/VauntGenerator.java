@@ -1,9 +1,9 @@
 package com.hltech.vaunt.generator;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.hltech.vaunt.core.domain.model.Service;
 import com.hltech.vaunt.generator.domain.representation.RepresentationExtractor;
 import com.hltech.vaunt.generator.domain.representation.RepresentationWriter;
-import com.hltech.vaunt.generator.domain.representation.model.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;

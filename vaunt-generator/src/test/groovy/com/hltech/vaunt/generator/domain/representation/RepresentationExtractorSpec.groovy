@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import com.hltech.vaunt.generator.domain.representation.message.SampleConsumerMessage
 import com.hltech.vaunt.generator.domain.representation.message.SampleProviderMessage
-import com.hltech.vaunt.generator.domain.representation.model.DestinationType
+import com.hltech.vaunt.core.domain.model.DestinationType
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject

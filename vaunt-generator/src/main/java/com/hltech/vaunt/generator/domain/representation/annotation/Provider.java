@@ -1,6 +1,6 @@
 package com.hltech.vaunt.generator.domain.representation.annotation;
 
-import com.hltech.vaunt.generator.domain.representation.model.DestinationType;
+import com.hltech.vaunt.core.domain.model.DestinationType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

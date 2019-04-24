@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.hltech.vaunt.core.domain.model.Capabilities;
+import com.hltech.vaunt.core.domain.model.Contract;
+import com.hltech.vaunt.core.domain.model.Expectations;
+import com.hltech.vaunt.core.domain.model.Service;
 import com.hltech.vaunt.generator.domain.representation.annotation.Consumer;
 import com.hltech.vaunt.generator.domain.representation.annotation.Provider;
-import com.hltech.vaunt.generator.domain.representation.model.Capabilities;
-import com.hltech.vaunt.generator.domain.representation.model.Contract;
-import com.hltech.vaunt.generator.domain.representation.model.Expectations;
-import com.hltech.vaunt.generator.domain.representation.model.Service;
 import lombok.RequiredArgsConstructor;
 import org.reflections.Reflections;
 
