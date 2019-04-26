@@ -40,10 +40,14 @@ allprojects {
 
 subprojects {
     dependencies {
-        compile "org.projectlombok:lombok:$lombokVersion"
         compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
         compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
-        
+
+        compileOnly "org.projectlombok:lombok:$lombokVersion"
+        annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+        testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+        testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
         testCompile "org.spockframework:spock-core:$spockVersion"
         testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
         testRuntimeOnly "net.bytebuddy:byte-buddy:$byteBuddyVersion"
