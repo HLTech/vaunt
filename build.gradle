@@ -37,7 +37,7 @@ project.group = 'com.hltech'
 
 scmVersion {
     tag {
-        prefix = 'pact-gen-release'
+        prefix = 'vaunt-release'
     }
 }
 
@@ -107,7 +107,7 @@ allprojects {
 
                     description = 'Toolkit to define and validate contracts in JMS'
                     url = 'https://github.com/HLTech/vaunt'
-                    inceptionYear = '2018'
+                    inceptionYear = '2019'
 
                     scm {
                         connection = 'scm:git:https://github.com/HLTech/vaunt.git'
