@@ -13,6 +13,8 @@ buildscript {
         byteBuddyVersion = '1.9.12'
         jsonPathAssertVersion = '2.2.0'
         objenesisVersion = '3.0.1'
+        guavaVersion = '27.1-jre'
+        reflectionsVersion = '0.9.11'
         axionReleasePluginVersion = '1.10.0'
         nexusStagingPluginVersion = '0.20.0'
         nexusPublishPluginVersion = '0.2.0'
@@ -37,8 +39,6 @@ scmVersion {
     }
 }
 
-project.version = scmVersion.version
-
 allprojects {
     repositories (repos)
 
@@ -51,6 +51,9 @@ allprojects {
     apply plugin: 'signing'
     apply plugin: 'org.sonarqube'
     apply plugin: 'de.marcphilipp.nexus-publish'
+
+    group = 'com.hltech'
+    version = scmVersion.version
 
     jacoco {
         toolVersion = "0.8.1"
@@ -130,6 +133,12 @@ allprojects {
             sign publishing.publications.mavenJava
         }
     }
+
+    sourceSets {
+        test.groovy.srcDirs(
+                "src/test/groovy"
+        )
+    }
 }
 
 subprojects {
@@ -153,6 +162,31 @@ subprojects {
             xml.enabled = true
             html.enabled = true
         }
+    }
+}
+
+project(":vaunt-core") {
+    dependencies {
+        compile "com.google.guava:guava:$guavaVersion"
+    }
+}
+
+project(":vaunt-generator") {
+    dependencies {
+        compile project(':vaunt-core')
+
+        compile "org.reflections:reflections:$reflectionsVersion"
+        compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
+
+        testCompile "com.jayway.jsonpath:json-path-assert:$jsonPathAssertVersion"
+    }
+}
+
+project(":vaunt-validator") {
+    dependencies {
+        compile project(':vaunt-core')
+
+        compile "com.google.guava:guava:$guavaVersion"
     }
 }
 
