@@ -11,3 +11,11 @@ jobs:
   - stage: build vaunt with gradle & generate reports
     script:
     - ./gradlew clean build jacocoRootReport coveralls
+  - stage: release to maven central
+    deploy:
+      skip_cleanup: true
+      provider: script
+      on:
+        branch: master
+        tags: true
+      script: bash deploy-to-maven-central.sh
