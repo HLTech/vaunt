@@ -33,10 +33,21 @@ buildscript {
 apply plugin: 'io.codearte.nexus-staging'
 apply plugin: 'pl.allegro.tech.build.axion-release'
 
+project.group = 'com.hltech'
+
 scmVersion {
     tag {
         prefix = 'pact-gen-release'
     }
+}
+
+nexusStaging {
+    packageGroup project.group
+    username System.getenv('SONATYPE_USER')
+    password System.getenv('SONATYPE_PASSWORD')
+    stagingProfileId = '8932a92dff8c84'
+    numberOfRetries = 5
+    delayBetweenRetriesInMillis = 60000
 }
 
 allprojects {
@@ -52,7 +63,7 @@ allprojects {
     apply plugin: 'org.sonarqube'
     apply plugin: 'de.marcphilipp.nexus-publish'
 
-    group = 'com.hltech'
+    group = project.group
     version = scmVersion.version
 
     jacoco {
