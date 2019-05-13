@@ -33,8 +33,6 @@ buildscript {
 apply plugin: 'io.codearte.nexus-staging'
 apply plugin: 'pl.allegro.tech.build.axion-release'
 
-project.group = 'com.hltech'
-
 scmVersion {
     tag {
         prefix = 'vaunt-release'
@@ -63,7 +61,7 @@ allprojects {
     apply plugin: 'org.sonarqube'
     apply plugin: 'de.marcphilipp.nexus-publish'
 
-    group = project.group
+    group = 'com.hltech'
     version = scmVersion.version
 
     jacoco {
