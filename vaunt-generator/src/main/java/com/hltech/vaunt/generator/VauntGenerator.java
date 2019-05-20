@@ -1,6 +1,8 @@
 package com.hltech.vaunt.generator;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.hltech.vaunt.core.domain.model.Service;
 import com.hltech.vaunt.generator.domain.representation.RepresentationExtractor;
 import com.hltech.vaunt.generator.domain.representation.RepresentationWriter;
@@ -13,6 +15,14 @@ public class VauntGenerator {
 
     private final RepresentationExtractor extractor;
     private final RepresentationWriter writer;
+
+    public VauntGenerator() {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonSchemaGenerator generator = new JsonSchemaGenerator(mapper);
+
+        extractor = new RepresentationExtractor(generator);
+        writer = new RepresentationWriter(mapper);
+    }
 
     public void writeVauntFile(String packageRoot, String serviceName, String targetDirectory) {
         try {
