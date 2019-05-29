@@ -14,6 +14,11 @@ public class RepresentationWriter {
     private final ObjectMapper mapper;
 
     public void writeServiceRepresentation(Service service, String targetDirectory) throws IOException {
+        File targetDir = Paths.get(targetDirectory).toFile();
+        if (targetDir != null && !targetDir.exists()) {
+            targetDir.mkdirs();
+        }
+
         File targetFile = Paths.get(targetDirectory).resolve(service.getName().concat(".json")).toFile();
         mapper.writeValue(targetFile, service);
     }
