@@ -32,7 +32,7 @@ class RepresentationWriterSpec extends Specification {
     def 'should write service representation as json file to target directory'() {
         given:
             def serviceName = 'information-service'
-            def targetDir = './build/tmp/test/'
+            def targetDir = './build/tmp/test/fake/dir'
 
         and:
             def providersToContracts = ArrayListMultimap.create()
