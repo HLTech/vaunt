@@ -154,7 +154,8 @@ subprojects {
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
         compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
-
+        compile "com.google.guava:guava:$guavaVersion"
+        
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
         testCompileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -175,9 +176,7 @@ subprojects {
 }
 
 project(":vaunt-core") {
-    dependencies {
-        compile "com.google.guava:guava:$guavaVersion"
-    }
+    
 }
 
 project(":vaunt-generator") {
@@ -194,8 +193,6 @@ project(":vaunt-generator") {
 project(":vaunt-validator") {
     dependencies {
         compile project(':vaunt-core')
-
-        compile "com.google.guava:guava:$guavaVersion"
     }
 }
 
