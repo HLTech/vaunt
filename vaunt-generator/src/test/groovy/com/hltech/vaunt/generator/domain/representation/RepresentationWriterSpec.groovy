@@ -1,9 +1,7 @@
 package com.hltech.vaunt.generator.domain.representation
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.guava.GuavaModule
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
 import com.google.common.collect.ArrayListMultimap
+import com.hltech.vaunt.core.VauntSerializer
 import com.hltech.vaunt.core.domain.model.Capabilities
 import com.hltech.vaunt.core.domain.model.Contract
 import com.hltech.vaunt.core.domain.model.DestinationType
@@ -24,10 +22,10 @@ import static spock.util.matcher.HamcrestSupport.expect
 class RepresentationWriterSpec extends Specification {
 
     @Shared
-    def mapper = new ObjectMapper().registerModule(new GuavaModule())
+    def serializer = new VauntSerializer()
 
     @Subject
-    RepresentationWriter writer = new RepresentationWriter(mapper)
+    RepresentationWriter writer = new RepresentationWriter(serializer)
 
     def 'should write service representation as json file to target directory'() {
         given:
@@ -100,8 +98,7 @@ class RepresentationWriterSpec extends Specification {
     }
 
     private Contract contract(DestinationType type, String name, Class<?> schemaClass) {
-        def schemaGenerator = new JsonSchemaGenerator(mapper)
-        new Contract(type, name, schemaGenerator.generateSchema(schemaClass))
+        new Contract(type, name, serializer.generateSchema(schemaClass))
     }
 
     class RequestMessage {

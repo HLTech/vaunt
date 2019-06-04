@@ -179,7 +179,10 @@ subprojects {
 }
 
 project(":vaunt-core") {
-    
+    dependencies {
+        compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
+        compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+    }
 }
 
 project(":vaunt-generator") {
@@ -187,8 +190,6 @@ project(":vaunt-generator") {
         compile project(':vaunt-core')
 
         compile "org.reflections:reflections:$reflectionsVersion"
-        compile "com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonVersion"
-        compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
 
         testCompile "com.jayway.jsonpath:json-path-assert:$jsonPathAssertVersion"
     }

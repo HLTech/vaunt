@@ -1,7 +1,6 @@
 package com.hltech.vaunt.generator.domain.representation
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
+import com.hltech.vaunt.core.VauntSerializer
 import com.hltech.vaunt.generator.domain.representation.message.SampleConsumerMessage
 import com.hltech.vaunt.generator.domain.representation.message.SampleProviderMessage
 import com.hltech.vaunt.core.domain.model.DestinationType
@@ -12,10 +11,10 @@ import spock.lang.Subject
 class RepresentationExtractorSpec extends Specification {
 
     @Shared
-    def jsonSchemaGenerator = new JsonSchemaGenerator(new ObjectMapper())
+    def serializer = new VauntSerializer()
 
     @Subject
-    RepresentationExtractor representationExtractor = new RepresentationExtractor(jsonSchemaGenerator)
+    RepresentationExtractor representationExtractor = new RepresentationExtractor(serializer)
 
     def 'Should extract service representation'() {
         given: 'package and service name'
@@ -33,7 +32,7 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts
             service.capabilities.contracts[0].destinationName == 'destination'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body == jsonSchemaGenerator.generateSchema(SampleProviderMessage)
+            service.capabilities.contracts[0].body == serializer.generateSchema(SampleProviderMessage)
 
         and: 'Expectations are as expected'
             service.expectations
@@ -44,6 +43,6 @@ class RepresentationExtractorSpec extends Specification {
             def providerContract = service.expectations.providerNameToContracts.get('provider')[0]
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'destination'
-            providerContract.body == jsonSchemaGenerator.generateSchema(SampleConsumerMessage)
+            providerContract.body == serializer.generateSchema(SampleConsumerMessage)
     }
 }
