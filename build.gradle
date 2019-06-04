@@ -13,7 +13,6 @@ buildscript {
         byteBuddyVersion = '1.9.12'
         jsonPathAssertVersion = '2.2.0'
         objenesisVersion = '3.0.1'
-        guavaVersion = '27.1-jre'
         reflectionsVersion = '0.9.11'
         axionReleasePluginVersion = '1.10.0'
         nexusStagingPluginVersion = '0.20.0'
@@ -154,7 +153,11 @@ subprojects {
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
         compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
-        compile "com.google.guava:guava:$guavaVersion"
+        compile ("com.google.guava:guava") {
+            version {
+                require "20.0"
+            }
+        }
         
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
