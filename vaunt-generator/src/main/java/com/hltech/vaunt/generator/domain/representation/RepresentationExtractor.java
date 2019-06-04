@@ -1,9 +1,9 @@
 package com.hltech.vaunt.generator.domain.representation;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.hltech.vaunt.core.VauntSerializer;
 import com.hltech.vaunt.core.domain.model.Capabilities;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.Expectations;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RepresentationExtractor {
 
-    private final JsonSchemaGenerator jsonSchemaGenerator;
+    private final VauntSerializer serializer;
 
     public Service extractServiceRepresentation(String packageRoot, String serviceName) throws JsonMappingException {
         return new Service(serviceName, extractCapabilities(packageRoot), extractExpectations(packageRoot));
@@ -31,7 +31,7 @@ public class RepresentationExtractor {
             providerContracts.add(new Contract(
                     providerMessage.getAnnotation(Provider.class).destinationType(),
                     providerMessage.getAnnotation(Provider.class).destinationName(),
-                    jsonSchemaGenerator.generateSchema(providerMessage)));
+                    serializer.generateSchema(providerMessage)));
         }
 
         return new Capabilities(providerContracts);
@@ -43,7 +43,7 @@ public class RepresentationExtractor {
             Contract contract = new Contract(
                     consumerMessage.getAnnotation(Consumer.class).destinationType(),
                     consumerMessage.getAnnotation(Consumer.class).destinationName(),
-                    jsonSchemaGenerator.generateSchema(consumerMessage));
+                    serializer.generateSchema(consumerMessage));
 
             providerNameToContracts.put(consumerMessage.getAnnotation(Consumer.class).providerName(), contract);
         }

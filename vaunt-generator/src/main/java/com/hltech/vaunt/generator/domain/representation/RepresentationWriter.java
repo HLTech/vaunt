@@ -1,6 +1,6 @@
 package com.hltech.vaunt.generator.domain.representation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hltech.vaunt.core.VauntSerializer;
 import com.hltech.vaunt.core.domain.model.Service;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class RepresentationWriter {
 
-    private final ObjectMapper mapper;
+    private final VauntSerializer serializer;
 
     public void writeServiceRepresentation(Service service, String targetDirectory) throws IOException {
         File targetDir = Paths.get(targetDirectory).toFile();
@@ -20,6 +20,6 @@ public class RepresentationWriter {
         }
 
         File targetFile = Paths.get(targetDirectory).resolve(service.getName().concat(".json")).toFile();
-        mapper.writeValue(targetFile, service);
+        serializer.serializeToFile(targetFile, service);
     }
 }
