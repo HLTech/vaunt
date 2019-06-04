@@ -3,6 +3,7 @@ package com.hltech.vaunt.generator;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.hltech.vaunt.core.domain.model.Service;
 import com.hltech.vaunt.generator.domain.representation.RepresentationExtractor;
@@ -20,6 +21,7 @@ public class VauntGenerator {
     public VauntGenerator() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new GuavaModule());
+        mapper.registerModule(new JavaTimeModule());
         JsonSchemaGenerator generator = new JsonSchemaGenerator(mapper);
 
         extractor = new RepresentationExtractor(generator);
