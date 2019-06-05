@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-class ValidationResult {
+public class ValidationResult {
     private final boolean isValid;
     private final String description;
     private final List<ValidationError> errors;
