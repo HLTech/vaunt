@@ -52,7 +52,7 @@ class VauntSerializerSpec extends Specification {
                             "properties":{
                                 "destinationType":{
                                     "type":"string",
-                                    "enum":["QUEUE","TOPIC"]
+                                    "enum":["QUEUE","TOPIC","TEMPORARY_QUEUE"]
                                 },
                                 "destinationName":{
                                     "type":"string"
