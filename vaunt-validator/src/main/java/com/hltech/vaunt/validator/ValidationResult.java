@@ -8,23 +8,27 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-public class ValidationResult {
+class ValidationResult {
     private final boolean isValid;
     private final String description;
     private final List<ValidationError> errors;
 
-    public static ValidationResult success(Contract expectation, List<Contract> capabilities) {
+    static ValidationResult success(Contract expectation, Contract capability) {
         return new ValidationResult(
                 true,
-                String.format("Expectation: %s, capabilities: %s", expectation, capabilities),
+                String.format("Expectation: %s, capability: %s", expectation, capability),
                 new ArrayList<>());
     }
 
-    public static ValidationResult failure(
+    static ValidationResult failure(Contract expectation, ValidationError... errors) {
+        return new ValidationResult(false, String.format("Expectation: %s", expectation), Arrays.asList(errors));
+    }
+
+    static ValidationResult failure(
             Contract expectation, List<Contract> capabilities, ValidationError... errors) {
         return new ValidationResult(
                 false,
-                String.format("Expectation: %s, capabilities: %s",expectation, capabilities),
+                String.format("Expectation: %s, capabilities: %s", expectation, capabilities),
                 Arrays.asList(errors));
     }
 }

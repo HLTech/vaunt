@@ -29,18 +29,17 @@ public class VauntValidator {
                 .collect(Collectors.toList());
 
         if (contracts.isEmpty()) {
-            return ValidationResult.failure(consumerContract, providerContracts, ValidationError.MISSING_ENDPOINT);
+            return ValidationResult.failure(consumerContract, ValidationError.MISSING_ENDPOINT);
         }
 
         Optional<Contract> matchingProviderContract = contracts.stream()
                 .filter(providerContract -> isSchemaMatching(consumerContract, providerContract))
                 .findFirst();
 
-        if (!matchingProviderContract.isPresent()) {
-            return ValidationResult.failure(consumerContract, providerContracts, ValidationError.WRONG_SCHEMA);
-        }
+        return matchingProviderContract
+                .map(contract -> ValidationResult.success(consumerContract, contract))
+                .orElseGet(() -> ValidationResult.failure(consumerContract, contracts, ValidationError.WRONG_SCHEMA));
 
-        return ValidationResult.success(consumerContract, providerContracts);
     }
 
     private boolean isEndpointMatching(Contract firstContract, Contract secondContract) {
