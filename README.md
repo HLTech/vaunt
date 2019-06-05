@@ -39,14 +39,16 @@ Scenario IIIb: Service 5 -> Topic C -> (Queue D) Service 6
 As a result, Service 5 is the provider, service 6 is the consumer.
 
 A contract contains:
-* Provider's JMS destination type: topic/queue
-* Provider's JMS destination name
+* Provider's JMS destination type: topic/queue/temporary queue
+* Provider's JMS destination name (omitted in case of temporary queues)
 * JSON schema of a message exchanged between consumer and provider
 
 Capabilities of a provider should contain the contract.  
 Expectations of a consumer should contain the contract and name of the provider.
 
 Annotations @Consumer and @Provider should be used on messages exchanged between consumer and provider.
+
+
 
 ## Built with <a name="BuiltWith"></a>
 

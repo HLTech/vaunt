@@ -1,6 +1,7 @@
 package com.hltech.vaunt.validator;
 
 import com.hltech.vaunt.core.domain.model.Contract;
+import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
 
 import java.util.List;
@@ -43,8 +44,22 @@ public class VauntValidator {
     }
 
     private boolean isEndpointMatching(Contract firstContract, Contract secondContract) {
-        return firstContract.getDestinationType().equals(secondContract.getDestinationType())
-                && firstContract.getDestinationName().equals(secondContract.getDestinationName());
+        return isTmpQueueMatching(firstContract, secondContract)
+                || (isDstTypeMatching(firstContract, secondContract)
+                && isDstNameMatching(firstContract, secondContract));
+    }
+
+    private boolean isTmpQueueMatching(Contract firstContract, Contract secondContract) {
+        return firstContract.getDestinationType() == DestinationType.TEMPORARY_QUEUE
+                && isDstTypeMatching(firstContract, secondContract);
+    }
+
+    private boolean isDstTypeMatching(Contract firstContract, Contract secondContract) {
+        return firstContract.getDestinationType() == secondContract.getDestinationType();
+    }
+
+    private boolean isDstNameMatching(Contract firstContract, Contract secondContract) {
+        return firstContract.getDestinationName().equals(secondContract.getDestinationName());
     }
 
     private boolean isSchemaMatching(Contract firstContract, Contract secondContract) {
