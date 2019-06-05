@@ -18,6 +18,7 @@ buildscript {
         nexusStagingPluginVersion = '0.20.0'
         nexusPublishPluginVersion = '0.2.0'
         sonarqubePluginVersion = '2.7'
+        guavaVersion = '27.1-jre'
     }
     repositories (repos)
     dependencies {
@@ -153,11 +154,7 @@ subprojects {
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
         compile "com.fasterxml.jackson.module:jackson-module-jsonSchema:$jacksonVersion"
-        compile ("com.google.guava:guava") {
-            version {
-                require "20.0"
-            }
-        }
+        compile "com.google.guava:guava:$guavaVersion"
         
         compileOnly "org.projectlombok:lombok:$lombokVersion"
         annotationProcessor "org.projectlombok:lombok:$lombokVersion"
@@ -168,6 +165,12 @@ subprojects {
         testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
         testRuntimeOnly "net.bytebuddy:byte-buddy:$byteBuddyVersion"
         testRuntimeOnly "org.objenesis:objenesis:$objenesisVersion"
+
+        constraints {
+            compile('com.google.guava:guava:20.0') {
+                because 'required to handle all edge scenarios'
+            }
+        }
     }
 
     jacocoTestReport {
