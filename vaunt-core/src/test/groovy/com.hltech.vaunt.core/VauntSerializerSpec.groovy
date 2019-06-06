@@ -1,8 +1,10 @@
 package com.hltech.vaunt.core
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Multimap
 import com.hltech.vaunt.core.domain.model.Contract
+import com.hltech.vaunt.core.domain.model.DestinationType
 import groovy.json.JsonSlurper
 import spock.lang.Shared
 import spock.lang.Specification
@@ -29,6 +31,26 @@ class VauntSerializerSpec extends Specification {
     def 'Should correctly generate schema'() {
         expect:
             new JsonSlurper().parseText(serializer.serializeSchema(serializer.generateSchema(Message))) == new JsonSlurper().parseText(expectedResponse())
+    }
+
+    def 'Should correctly parse contracts'() {
+        given:
+            def dstType = DestinationType.QUEUE
+            def dstName = 'dst'
+            def contract = """
+                    [
+                        {
+                            "destinationType":"${dstType}",
+                            "destinationName":"${dstName}",
+                            "body": {
+                                "type":"string"
+                            }
+                        }
+                    ]
+                """
+
+        expect:
+            serializer.parseContracts(contract) == [new Contract(dstType, dstName, new StringSchema())]
     }
 
     def expectedResponse() {
