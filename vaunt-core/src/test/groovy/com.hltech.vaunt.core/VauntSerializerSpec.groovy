@@ -1,6 +1,6 @@
 package com.hltech.vaunt.core
 
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
+import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Multimap
 import com.hltech.vaunt.core.domain.model.Contract
@@ -15,14 +15,14 @@ import java.time.ZonedDateTime
 class VauntSerializerSpec extends Specification {
 
     @Shared
-    def mapper = new VauntSerializer().mapper
+    def generator = new VauntSerializer().generator
 
     @Subject
     def serializer = new VauntSerializer()
 
     def 'Should correctly serialize schema'() {
         given:
-            def schema = new JsonSchemaGenerator(mapper).generateSchema(Message)
+            def schema = generator.generateSchema(Message)
 
         expect:
             new JsonSlurper().parseText(serializer.serializeSchema(schema)) == new JsonSlurper().parseText(expectedResponse())
@@ -57,7 +57,7 @@ class VauntSerializerSpec extends Specification {
         """
         {
             "type":"object",
-            "id":"urn:jsonschema:com:hltech:vaunt:core:VauntSerializerSpec:Message",
+            "id":"Message",
             "properties":{
                 "string":{
                     "type":"string"
@@ -70,7 +70,7 @@ class VauntSerializerSpec extends Specification {
                         "type":"array",
                         "items":{
                             "type":"object",
-                            "id":"urn:jsonschema:com:hltech:vaunt:core:domain:model:Contract",
+                            "id":"Contract",
                             "properties":{
                                 "destinationType":{
                                     "type":"string",
@@ -81,7 +81,7 @@ class VauntSerializerSpec extends Specification {
                                 },
                                 "body":{
                                     "type":"object",
-                                    "id":"urn:jsonschema:com:fasterxml:jackson:module:jsonSchema:JsonSchema",
+                                    "id":"JsonSchema",
                                     "properties":{
                                         "id":{
                                             "type":"string"
@@ -96,7 +96,7 @@ class VauntSerializerSpec extends Specification {
                                             "type":"array",
                                             "items":{
                                                 "type":"object",
-                                                "\$ref":"urn:jsonschema:com:fasterxml:jackson:module:jsonSchema:JsonSchema"
+                                                "\$ref":"JsonSchema"
                                             }
                                         },
                                         "required":{
@@ -112,7 +112,7 @@ class VauntSerializerSpec extends Specification {
                                             "type":"array",
                                             "items":{
                                                 "type":"object",
-                                                "\$ref":"urn:jsonschema:com:fasterxml:jackson:module:jsonSchema:JsonSchema"
+                                                "\$ref":"JsonSchema"
                                             }
                                         }
                                     }
@@ -132,7 +132,7 @@ class VauntSerializerSpec extends Specification {
         """
     }
 
-    class Message {
+    class Message extends VisitorContext {
         String string
         ZonedDateTime zonedDateTime
         Multimap<String, Contract> mapped

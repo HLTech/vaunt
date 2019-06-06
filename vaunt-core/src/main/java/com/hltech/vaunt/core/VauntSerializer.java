@@ -2,12 +2,15 @@ package com.hltech.vaunt.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext;
 import com.google.common.collect.Lists;
 import com.hltech.vaunt.core.domain.model.Contract;
 
@@ -25,7 +28,9 @@ public class VauntSerializer {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new JavaTimeModule());
 
-        generator = new JsonSchemaGenerator(mapper);
+        SchemaFactoryWrapper wrapper = new SchemaFactoryWrapper();
+        wrapper.setVisitorContext(new IdVisitorContext());
+        generator = new JsonSchemaGenerator(mapper, wrapper);
     }
 
     public JsonSchema generateSchema(Class<?> type) throws JsonMappingException {
@@ -52,5 +57,12 @@ public class VauntSerializer {
 
     public void serializeToFile(File resultFile, Object value) throws IOException {
         mapper.writeValue(resultFile, value);
+    }
+
+    class IdVisitorContext extends VisitorContext {
+        @Override
+        public String javaTypeToUrn(JavaType jt) {
+            return jt.getRawClass().getSimpleName();
+        }
     }
 }
