@@ -46,7 +46,8 @@ A contract contains:
 Capabilities of a provider should contain the contract.  
 Expectations of a consumer should contain the contract and name of the provider.
 
-Annotations @Consumer and @Provider should be used on messages exchanged between consumer and provider.
+Annotations @Consumer and @Provider should be used on messages exchanged between consumer and provider. For now messages should have
+the same name.
 
 
 
