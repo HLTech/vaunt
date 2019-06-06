@@ -16,7 +16,7 @@ public class ValidationResult {
     static ValidationResult success(Contract expectation, Contract capability) {
         return new ValidationResult(
                 true,
-                String.format("Expectation: %s, capability: %s", expectation, capability),
+                String.format("Expectation: %s, Capability: %s", expectation, capability),
                 new ArrayList<>());
     }
 
@@ -28,7 +28,7 @@ public class ValidationResult {
             Contract expectation, List<Contract> capabilities, ValidationError... errors) {
         return new ValidationResult(
                 false,
-                String.format("Expectation: %s, capabilities: %s", expectation, capabilities),
+                String.format("Expectation: %s, Capabilities: %s", expectation, capabilities),
                 Arrays.asList(errors));
     }
 }
