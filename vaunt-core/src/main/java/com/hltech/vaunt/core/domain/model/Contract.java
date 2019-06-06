@@ -13,7 +13,7 @@ public class Contract {
     @Override
     public String toString() {
         return "Contract(destinationType=" + destinationType.toString()
-                + ", destinationName=" + destinationType
+                + ", destinationName=" + destinationName
                 + ", body =" + new VauntSerializer().serializeSchema(body);
     }
 }
