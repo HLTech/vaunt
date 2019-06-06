@@ -21,6 +21,7 @@ import java.util.List;
 public class VauntSerializer {
 
     private final ObjectMapper mapper;
+    private final SchemaFactoryWrapper wrapper;
     private final JsonSchemaGenerator generator;
 
     public VauntSerializer() {
@@ -28,12 +29,13 @@ public class VauntSerializer {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new JavaTimeModule());
 
-        SchemaFactoryWrapper wrapper = new SchemaFactoryWrapper();
+        wrapper = new SchemaFactoryWrapper();
         wrapper.setVisitorContext(new IdVisitorContext());
         generator = new JsonSchemaGenerator(mapper, wrapper);
     }
 
     public JsonSchema generateSchema(Class<?> type) throws JsonMappingException {
+        wrapper.setVisitorContext(new IdVisitorContext());
         return generator.generateSchema(type);
     }
 
@@ -60,6 +62,7 @@ public class VauntSerializer {
     }
 
     class IdVisitorContext extends VisitorContext {
+
         @Override
         public String javaTypeToUrn(JavaType jt) {
             return jt.getRawClass().getSimpleName();
