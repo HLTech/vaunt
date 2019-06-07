@@ -1,4 +1,4 @@
-package com.hltech.vaunt.validator
+package com.hltech.vaunt.validator.projectA.messages
 
 class SampleMessage {
     String value

@@ -63,7 +63,8 @@ public class VauntValidator {
     }
 
     private boolean isSchemaMatching(Contract firstContract, Contract secondContract) {
-        return firstContract.getBody().equals(secondContract.getBody());
+        return firstContract.getBody().getId().equals(secondContract.getBody().getId())
+                && firstContract.getBody().equals(secondContract.getBody());
     }
 
 }
