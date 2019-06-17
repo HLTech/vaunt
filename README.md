@@ -46,8 +46,9 @@ A contract contains:
 Capabilities of a provider should contain the contract.  
 Expectations of a consumer should contain the contract and name of the provider.
 
-Annotations @Consumer and @Provider should be used on messages exchanged between consumer and provider. For now messages should have
-the same name. Inner objects might have different names (ids).
+Annotations @Consumer and @Provider should be used on messages exchanged between consumer and provider. One message can be
+annotated with multiple annotations For now classes representing messages should have the same name. Objects belonging to 
+other via composition might have different names (ids).
 
 
 
