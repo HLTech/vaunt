@@ -38,7 +38,7 @@ public class VauntValidator {
                 .findFirst();
 
         return matchingProviderContract
-                .map(contract -> ValidationResult.success(consumerContract, contract))
+                .map(contract -> ValidationResult.success(consumerContract))
                 .orElseGet(() -> ValidationResult.failure(consumerContract, contracts, ValidationError.WRONG_SCHEMA));
 
     }

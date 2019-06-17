@@ -13,10 +13,13 @@ public class ValidationResult {
     private final String description;
     private final List<ValidationError> errors;
 
-    static ValidationResult success(Contract expectation, Contract capability) {
+    static ValidationResult success(Contract expectation) {
         return new ValidationResult(
                 true,
-                String.format("Expectation: %s, Capability: %s", expectation, capability),
+                String.format("Matching contract: %s %s, %s",
+                        expectation.getDestinationType(),
+                        expectation.getDestinationName(),
+                        expectation.getBody().getId()),
                 new ArrayList<>());
     }
 
