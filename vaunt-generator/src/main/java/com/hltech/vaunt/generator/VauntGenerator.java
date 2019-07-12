@@ -8,6 +8,7 @@ import com.hltech.vaunt.generator.domain.representation.RepresentationWriter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.util.Properties;
 
 @RequiredArgsConstructor
 public class VauntGenerator {
@@ -22,16 +23,21 @@ public class VauntGenerator {
     }
 
     public void writeVauntFile(String packageRoot, String serviceName, String targetDirectory) {
+        writeVauntFile(packageRoot, serviceName, targetDirectory, new Properties());
+    }
+
+    public void writeVauntFile(String packageRoot, String serviceName, String targetDirectory, Properties props) {
         try {
-            writer.writeServiceRepresentation(serviceRepresentation(packageRoot, serviceName), targetDirectory);
+            writer.writeServiceRepresentation(
+                    serviceRepresentation(packageRoot, serviceName, props), targetDirectory);
         } catch (IOException ex) {
             throw new RuntimeException("Error when trying to write service representation to file", ex);
         }
     }
 
-    private Service serviceRepresentation(String packageRoot, String serviceName) {
+    private Service serviceRepresentation(String packageRoot, String serviceName, Properties props) {
         try {
-            return extractor.extractServiceRepresentation(packageRoot, serviceName);
+            return extractor.extractServiceRepresentation(packageRoot, serviceName, props);
         } catch (JsonMappingException ex) {
             throw new RuntimeException(
                     String.format(

@@ -18,64 +18,68 @@ import org.reflections.Reflections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 @RequiredArgsConstructor
 public class RepresentationExtractor {
 
     private final VauntSerializer serializer;
 
-    public Service extractServiceRepresentation(String packageRoot, String serviceName) throws JsonMappingException {
-        return new Service(serviceName, extractCapabilities(packageRoot), extractExpectations(packageRoot));
+    public Service extractServiceRepresentation(String packageRoot, String serviceName, Properties props)
+            throws JsonMappingException {
+        return new Service(serviceName,
+                extractCapabilities(packageRoot, props),
+                extractExpectations(packageRoot, props));
     }
 
-    private Capabilities extractCapabilities(String packageRoot) {
+    private Capabilities extractCapabilities(String packageRoot, Properties props) {
         List<Contract> providerContracts = new ArrayList<>();
 
         new Reflections(packageRoot).getTypesAnnotatedWith(Providers.class)
                 .forEach(providerMessage -> Arrays.stream(providerMessage.getAnnotation(Providers.class).value())
                         .forEach(providerAnnotation -> providerContracts.add(
-                                extractProviderContract(providerMessage, providerAnnotation))));
+                                extractProviderContract(providerMessage, providerAnnotation, props))));
 
         new Reflections(packageRoot).getTypesAnnotatedWith(Provider.class)
-                .forEach(providerMessage -> providerContracts.add(
-                        extractProviderContract(providerMessage, providerMessage.getAnnotation(Provider.class))));
+                .forEach(providerMessage -> providerContracts.add(extractProviderContract(
+                        providerMessage, providerMessage.getAnnotation(Provider.class), props)));
 
         return new Capabilities(providerContracts);
     }
 
-    private Expectations extractExpectations(String packageRoot) {
+    private Expectations extractExpectations(String packageRoot, Properties props) {
         Multimap<String, Contract> providerNameToContracts = ArrayListMultimap.create();
 
         new Reflections(packageRoot).getTypesAnnotatedWith(Consumers.class)
                 .forEach(consumerMessage -> Arrays.stream(consumerMessage.getAnnotation(Consumers.class).value())
                         .forEach(consumerAnnotation -> providerNameToContracts.put(
                                 consumerAnnotation.providerName(),
-                                extractConsumerContract(consumerMessage, consumerAnnotation))));
+                                extractConsumerContract(consumerMessage, consumerAnnotation, props))));
 
         new Reflections(packageRoot).getTypesAnnotatedWith(Consumer.class)
                 .forEach(consumerMessage -> providerNameToContracts.put(
-                        consumerMessage.getAnnotation(Consumer.class).providerName(),
-                        extractConsumerContract(consumerMessage, consumerMessage.getAnnotation(Consumer.class))));
+                        consumerMessage.getAnnotation(Consumer.class).providerName(), extractConsumerContract(
+                                consumerMessage, consumerMessage.getAnnotation(Consumer.class), props)));
 
         return new Expectations(providerNameToContracts);
     }
 
-    private Contract extractProviderContract(Class<?> providerMessage, Provider providerAnnotation) {
+    private Contract extractProviderContract(Class<?> providerMessage, Provider providerAnnotation, Properties props) {
         try {
             return new Contract(
                     providerAnnotation.destinationType(),
-                    providerAnnotation.destinationName(),
+                    props.getProperty(providerAnnotation.destinationName(), providerAnnotation.destinationName()),
                     serializer.generateSchema(providerMessage));
         } catch (JsonMappingException ex) {
             throw new RuntimeException("Unable to extract contract for given provider", ex);
         }
     }
 
-    private Contract extractConsumerContract(Class<?> consumerMessage, Consumer consumerAnnotation) {
+    private Contract extractConsumerContract(Class<?> consumerMessage, Consumer consumerAnnotation, Properties props) {
         try {
             return new Contract(
                     consumerAnnotation.destinationType(),
-                    consumerAnnotation.destinationName(),
+                    props.getProperty(consumerAnnotation.destinationName(), consumerAnnotation.destinationName()),
                     serializer.generateSchema(consumerMessage));
         } catch (JsonMappingException ex) {
             throw new RuntimeException("Unable to extract contract for given consumer", ex);
