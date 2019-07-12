@@ -22,7 +22,7 @@ class VauntGeneratorSpec extends Specification {
 
         and:
             def service = Mock(Service)
-            extractorMock.extractServiceRepresentation(packageRoot, serviceName) >> service
+            extractorMock.extractServiceRepresentation(packageRoot, serviceName, new Properties()) >> service
 
         when:
             generator.writeVauntFile(packageRoot, serviceName, targetDir)
