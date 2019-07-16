@@ -21,3 +21,15 @@ class AnotherSampleMessage {
     String value
     int amount
 }
+
+class EnumMessage {
+
+    InnerEnum en
+
+    enum InnerEnum {
+        A,
+        B,
+        C,
+        D
+    }
+}
