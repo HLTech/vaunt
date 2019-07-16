@@ -10,3 +10,14 @@ class InnerMessage {
     String value2
     BigDecimal amount
 }
+
+class EnumMessage {
+
+    InnerEnum en
+
+    enum InnerEnum {
+        A,
+        B,
+        C
+    }
+}

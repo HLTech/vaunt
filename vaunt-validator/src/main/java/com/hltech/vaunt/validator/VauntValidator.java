@@ -1,11 +1,17 @@
 package com.hltech.vaunt.validator;
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VauntValidator {
@@ -34,7 +40,8 @@ public class VauntValidator {
         }
 
         Optional<Contract> matchingProviderContract = contracts.stream()
-                .filter(providerContract -> isSchemaMatching(consumerContract, providerContract))
+                .filter(providerContract -> isSchemaAndIdMatching(
+                        consumerContract.getBody(), providerContract.getBody()))
                 .findFirst();
 
         return matchingProviderContract
@@ -62,9 +69,88 @@ public class VauntValidator {
         return firstContract.getDestinationName().equals(secondContract.getDestinationName());
     }
 
-    private boolean isSchemaMatching(Contract firstContract, Contract secondContract) {
-        return firstContract.getBody().getId().equals(secondContract.getBody().getId())
-                && firstContract.getBody().equals(secondContract.getBody());
+    private boolean isSchemaAndIdMatching(JsonSchema consumerBody, JsonSchema providerBody) {
+        if (!consumerBody.getId().equals(providerBody.getId())) {
+            return false;
+        }
+
+        return isSchemaMatching(consumerBody, providerBody);
     }
 
+    private boolean isSchemaMatching(JsonSchema consumerBody, JsonSchema providerBody) {
+        if (isEnum(consumerBody) && isEnum(providerBody)) {
+            return compareEnumSchema(consumerBody, providerBody);
+        }
+
+        if (isObject(consumerBody) && isObject(providerBody)) {
+            return compareObjectSchema(consumerBody.asObjectSchema(), providerBody.asObjectSchema());
+        }
+
+        return consumerBody.equals(providerBody);
+    }
+
+    private boolean isEnum(JsonSchema schema) {
+        return schema.asStringSchema() != null && schema.asStringSchema().getEnums().size() > 0;
+    }
+
+    private boolean isObject(JsonSchema schema) {
+        return schema.asObjectSchema() != null;
+    }
+
+    private boolean compareEnumSchema(JsonSchema consumerBody, JsonSchema providerBody) {
+        return compareStringSchemaPart(consumerBody.asStringSchema(), providerBody.asStringSchema())
+                && compareSimpleTypeSchemaPart(consumerBody.asSimpleTypeSchema(), providerBody.asSimpleTypeSchema())
+                && compareJsonSchemaPart(consumerBody, providerBody);
+    }
+
+    private boolean compareStringSchemaPart(StringSchema consumerBody, StringSchema providerBody) {
+        return equals(consumerBody.getMaxLength(), providerBody.getMaxLength())
+                && equals(consumerBody.getMinLength(), providerBody.getMinLength())
+                && equals(consumerBody.getPattern(), providerBody.getPattern())
+                && equals(consumerBody.getFormat(), providerBody.getFormat())
+                && compareEnum(consumerBody.getEnums(), providerBody.getEnums());
+    }
+
+    private boolean compareSimpleTypeSchemaPart(SimpleTypeSchema consumerBody, SimpleTypeSchema providerBody) {
+        return equals(consumerBody.getDefault(), providerBody.getDefault())
+                && equals(consumerBody.getTitle(), providerBody.getTitle())
+                && equals(consumerBody.getPathStart(), providerBody.getPathStart())
+                && equals(consumerBody.getLinks(), providerBody.getLinks());
+    }
+
+    private boolean compareJsonSchemaPart(JsonSchema consumerBody, JsonSchema providerBody) {
+        return equals(consumerBody.getId(), providerBody.getId())
+                && equals(consumerBody.getRequired(), providerBody.getRequired())
+                && equals(consumerBody.getReadonly(), providerBody.getReadonly())
+                && equals(consumerBody.get$ref(), providerBody.get$ref())
+                && equals(consumerBody.get$schema(), providerBody.get$schema())
+                && equals(consumerBody.getDisallow(), providerBody.getDisallow())
+                && equals(consumerBody.getExtends(), providerBody.getExtends());
+    }
+
+    private boolean compareEnum(Set<String> consumerEnums, Set<String> providerEnums) {
+        return providerEnums.containsAll(consumerEnums);
+    }
+
+    private boolean compareObjectSchema(ObjectSchema consumerBody, ObjectSchema providerBody) {
+        return equals(consumerBody.getAdditionalProperties(), providerBody.getAdditionalProperties())
+                && equals(consumerBody.getDependencies(), providerBody.getDependencies())
+                && equals(consumerBody.getPatternProperties(), providerBody.getPatternProperties())
+                && compareObjectProperties(consumerBody.getProperties(), providerBody.getProperties());
+    }
+
+    private boolean compareObjectProperties(
+            Map<String, JsonSchema> consumerProperties, Map<String, JsonSchema> providerProperties) {
+        return consumerProperties.keySet().equals(providerProperties.keySet())
+                && consumerProperties.keySet().stream()
+                    .allMatch(key -> isSchemaMatching(consumerProperties.get(key), providerProperties.get(key)));
+    }
+
+    private boolean equals(Object object1, Object object2) {
+        if (object1 == null) {
+            return object2 == null;
+        } else {
+            return object1.equals(object2);
+        }
+    }
 }
