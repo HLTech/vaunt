@@ -50,7 +50,38 @@ Annotations @Consumer and @Provider should be used on messages exchanged between
 annotated with multiple annotations For now classes representing messages should have the same name. Objects belonging to 
 other via composition might have different names (ids).
 
+It is possible to provide properties with JMS destination names.
 
+Values of each enum contained in expectations must be a subset of corresponding enum values contained in capabilities.
+
+## Example of code snippet with test creating Vaunt contract
+```
+@SpringBootTest
+class GenerateVauntIT extends Specification {
+
+    @Autowired
+    Environment env
+
+    @Autowired
+    private ApplicationContext applicationContext
+
+    @Subject
+    VauntGenerator vauntGenerator = new VauntGenerator()
+
+    def 'should generate vaunt file'() {
+        expect:
+            YAMLConfiguration config = new YAMLConfiguration()
+            config.read(new FileInputStream("src/main/resources/application.yml"))
+
+            def props = new Properties()
+            for(String key : config.getKeys()) {
+                props.put(key, env.getProperty(key))
+            }
+
+            vauntGenerator.writeVauntFile('com.hltech.sample.component', 'sample-component', 'target/classes/static/vaunt', props)
+    }
+}
+```
 
 ## Built with <a name="BuiltWith"></a>
 
