@@ -26,9 +26,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Consumer and provider having matching contract should pass validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
-            def providerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.QUEUE, 'queue', providerJsonSchema)
 
         and: 'consumer and provider representation'
             ArrayListMultimap<String, Contract> providerNameToContracts = ArrayListMultimap.create()
@@ -49,9 +50,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Matching expectations and capabilities should pass validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
-            def providerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.QUEUE, 'queue', providerJsonSchema)
 
         when: 'expectations and capabilities are validated'
             def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
@@ -65,9 +67,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Consumer expecting nonexistent endpoint (different destination type) should fail validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
-            def providerContract = new Contract(DestinationType.TOPIC, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'queue', providerJsonSchema)
 
         and: 'consumer and provider representation'
             ArrayListMultimap<String, Contract> providerNameToContracts = ArrayListMultimap.create()
@@ -89,9 +92,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Expectations against nonexistent endpoint (different destination type) should fail validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', jsonSchema)
-            def providerContract = new Contract(DestinationType.TOPIC, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.QUEUE, 'queue', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'queue', providerJsonSchema)
 
         when: 'expectations and capabilities are validated'
             def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
@@ -106,9 +110,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Consumer expecting nonexistent endpoint for types other than temporary queues (different destination name) should fail validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', jsonSchema)
-            def providerContract = new Contract(DestinationType.TOPIC, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'queue', providerJsonSchema)
 
         and: 'consumer and provider representation'
             ArrayListMultimap<String, Contract> providerNameToContracts = ArrayListMultimap.create()
@@ -130,9 +135,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Consumer expecting existing endpoint with different destination names for temporary queues should pass validation'() {
         given: 'consumer and provider contracts'
-        def jsonSchema = serializer.generateSchema(SampleMessage)
-        def consumerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'a name', jsonSchema)
-        def providerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'another name', jsonSchema)
+        def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+        def providerJsonSchema = serializer.generateSchema(SampleMessage)
+        def consumerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'a name', consumerJsonSchema)
+        def providerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'another name', providerJsonSchema)
 
         and: 'consumer and provider representation'
         ArrayListMultimap<String, Contract> providerNameToContracts = ArrayListMultimap.create()
@@ -153,9 +159,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Expectations against nonexistent endpoint for types other than temporary queues (different destination name) should fail validation'() {
         given: 'consumer and provider contracts'
-            def jsonSchema = serializer.generateSchema(SampleMessage)
-            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', jsonSchema)
-            def providerContract = new Contract(DestinationType.TOPIC, 'queue', jsonSchema)
+            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'queue', providerJsonSchema)
 
         when: 'expectations and capabilities are validated'
             def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
@@ -170,9 +177,10 @@ class VauntValidatorSpec extends Specification {
 
     def 'Expectations against existing endpoint with different destination names for temporary queues should pass validation'() {
         given: 'consumer and provider contracts'
-        def jsonSchema = serializer.generateSchema(SampleMessage)
-        def consumerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'any name', jsonSchema)
-        def providerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'any other name', jsonSchema)
+        def consumerJsonSchema = serializer.generateSchema(SampleMessage)
+        def providerJsonSchema = serializer.generateSchema(SampleMessage)
+        def consumerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'any name', consumerJsonSchema)
+        def providerContract = new Contract(DestinationType.TEMPORARY_QUEUE, 'any other name', providerJsonSchema)
 
         when: 'expectations and capabilities are validated'
         def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
@@ -245,7 +253,7 @@ class VauntValidatorSpec extends Specification {
         validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
     }
 
-    def 'Expectations with the same JsonSchema of a message as capabilities except inner objecs ids should pass validation'() {
+    def 'Expectations with the same JsonSchema of a message as capabilities except inner object ids should pass validation'() {
         given: 'consumer and provider contracts'
         def consumerJsonSchema = serializer.generateSchema(SampleMessage)
         def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectA.messages.SampleMessage)
