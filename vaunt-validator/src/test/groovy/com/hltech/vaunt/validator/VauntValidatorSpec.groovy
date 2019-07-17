@@ -15,6 +15,7 @@ import com.hltech.vaunt.validator.projectB.messages.SampleMessage
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 
 class VauntValidatorSpec extends Specification {
@@ -271,12 +272,13 @@ class VauntValidatorSpec extends Specification {
             validationResults[0].errors.size() == 0
     }
 
-    def 'Expectations with JsonSchema of a message containing subset of what is in Capabilities should pass validation'() {
+    @Unroll
+    def 'Expectations with JsonSchema of a message containing subset of what is in Capabilities should pass validation - dstType = #dstType'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(EnumMessage)
             def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumMessage)
-            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
-            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+            def consumerContract = new Contract(dstType, dstType.toString(), consumerJsonSchema)
+            def providerContract = new Contract(dstType, dstType.toString(), providerJsonSchema)
 
         when: 'expectations and capabilities are validated'
             def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
@@ -286,12 +288,55 @@ class VauntValidatorSpec extends Specification {
             validationResults[0].valid
             validationResults[0].errors != null
             validationResults[0].errors.size() == 0
+
+        where:
+            dstType << [DestinationType.QUEUE, DestinationType.TEMPORARY_QUEUE]
     }
 
-    def 'Capabilities with JsonSchema of a message containing subset of what is in Expectations should not pass validation'() {
+    def 'Expectations with JsonSchema of a message containing subset of what is in Capabilities should not pass validation - dstType = topic'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(EnumMessage)
             def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should be wrong schema validation error'
+            validationResults.size() == 1
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+    }
+
+    @Unroll
+    def 'Capabilities with JsonSchema of a message containing subset of what is in Expectations should not pass validation - dstType = #dstType'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumMessage)
+            def providerJsonSchema = serializer.generateSchema(EnumMessage)
+            def consumerContract = new Contract(dstType, dstType.toString(), consumerJsonSchema)
+            def providerContract = new Contract(dstType, dstType.toString(), providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should be wrong schema validation error'
+            validationResults.size() == 1
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+
+        where:
+            dstType << [DestinationType.QUEUE, DestinationType.TEMPORARY_QUEUE]
+    }
+
+    def 'Capabilities with JsonSchema of a message containing subset of what is in Expectations should pass validation - dstType = topic'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumMessage)
+            def providerJsonSchema = serializer.generateSchema(EnumMessage)
             def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
             def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
 
