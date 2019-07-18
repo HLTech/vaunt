@@ -27,11 +27,10 @@ public class ValidationResult {
         return new ValidationResult(false, String.format("Expectation: %s", expectation), Arrays.asList(errors));
     }
 
-    static ValidationResult failure(
-            Contract expectation, List<Contract> capabilities, ValidationError... errors) {
+    static ValidationResult failure(Contract expectation, Contract capability, ValidationError... errors) {
         return new ValidationResult(
                 false,
-                String.format("Expectation: %s, Capabilities: %s", expectation, capabilities),
+                String.format("Expectation: %s, Capability: %s", expectation, capability),
                 Arrays.asList(errors));
     }
 }

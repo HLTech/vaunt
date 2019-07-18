@@ -11,7 +11,6 @@ import com.hltech.vaunt.core.domain.model.Service
 import com.hltech.vaunt.validator.projectA.messages.EnumMessage
 import com.hltech.vaunt.validator.projectA.messages.EnumStringMessage
 import com.hltech.vaunt.validator.projectB.messages.AnotherSampleMessage
-import com.hltech.vaunt.validator.projectB.messages.SameMessageAsSample
 import com.hltech.vaunt.validator.projectB.messages.SampleMessage
 import spock.lang.Shared
 import spock.lang.Specification
@@ -195,7 +194,7 @@ class VauntValidatorSpec extends Specification {
             validationResults[0].errors.size() == 0
     }
 
-    def 'Consumer expecting different JsonSchema of a message than provider should fail validation'() {
+    def 'Consumer expecting different id of a message than provider should fail validation'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(SampleMessage)
             def providerJsonSchema = serializer.generateSchema(AnotherSampleMessage)
@@ -217,10 +216,10 @@ class VauntValidatorSpec extends Specification {
             !validationResults[0].valid
             validationResults[0].errors
             validationResults[0].errors.size() == 1
-            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+            validationResults[0].errors[0] == ValidationError.MISSING_MESSAGE_WITH_NAME
     }
 
-    def 'Expectations with different JsonSchema of a message than capabilities should fail validation'() {
+    def 'Expectations with different id of a message than capabilities should fail validation'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(SampleMessage)
             def providerJsonSchema = serializer.generateSchema(AnotherSampleMessage)
@@ -235,13 +234,31 @@ class VauntValidatorSpec extends Specification {
             !validationResults[0].valid
             validationResults[0].errors
             validationResults[0].errors.size() == 1
-            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+            validationResults[0].errors[0] == ValidationError.MISSING_MESSAGE_WITH_NAME
     }
 
-    def 'Expectations with the same JsonSchema of a message as capabilities except message ids should fail validation'() {
+    def 'When more than one capabilities of provider fulfill expectations validator should fail validation'() {
         given: 'consumer and provider contracts'
-            def consumerJsonSchema = serializer.generateSchema(SampleMessage)
-            def providerJsonSchema = serializer.generateSchema(SameMessageAsSample)
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectA.messages.SampleMessage)
+            def providerJsonSchema = serializer.generateSchema(SampleMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract, providerContract))
+
+        then: 'there should be wrong schema validation error'
+            validationResults.size() == 1
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.DUPLICATE_MATCH
+    }
+
+    def 'Expectations with different JsonSchema of a message than capabilities should fail validation'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectA.messages.AnotherSampleMessage)
+            def providerJsonSchema = serializer.generateSchema(AnotherSampleMessage)
             def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
             def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
 
