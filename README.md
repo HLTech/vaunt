@@ -53,8 +53,8 @@ other via composition might have different names (ids).
 It is possible to provide properties with JMS destination names.
 
 Enums:
-* Queue - values of each enum contained in expectations must be a subset of corresponding enum values contained in capabilities.
-* Topic - values of each enum contained in capabilities must be a subset of corresponding enum values contained in expectations.
+Values of each sent enum must be a subset of corresponding enum values expected to be received. Corresponding enum
+might be of String type as well.
 
 ## Example of code snippet with test creating Vaunt contract
 ```

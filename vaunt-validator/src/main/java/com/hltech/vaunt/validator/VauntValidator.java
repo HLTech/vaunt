@@ -11,7 +11,6 @@ import com.hltech.vaunt.core.domain.model.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class VauntValidator {
@@ -78,23 +77,23 @@ public class VauntValidator {
     }
 
     private boolean isSchemaMatching(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
-        if (isEnum(consumerBody) && isEnum(providerBody)) {
+        if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
             return compareEnumSchema(dstType, consumerBody, providerBody);
         }
 
-        if (isObject(consumerBody) && isObject(providerBody)) {
+        if (isObjectSchema(consumerBody) && isObjectSchema(providerBody)) {
             return compareObjectSchema(dstType, consumerBody.asObjectSchema(), providerBody.asObjectSchema());
         }
 
         return consumerBody.equals(providerBody);
     }
 
-    private boolean isEnum(JsonSchema schema) {
-        return schema.asStringSchema() != null && schema.asStringSchema().getEnums().size() > 0;
+    private boolean isObjectSchema(JsonSchema schema) {
+        return schema.asObjectSchema() != null;
     }
 
-    private boolean isObject(JsonSchema schema) {
-        return schema.asObjectSchema() != null;
+    private boolean isStringSchema(JsonSchema schema) {
+        return schema.asStringSchema() != null;
     }
 
     private boolean compareEnumSchema(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
@@ -110,7 +109,7 @@ public class VauntValidator {
                 && equals(consumerBody.getMinLength(), providerBody.getMinLength())
                 && equals(consumerBody.getPattern(), providerBody.getPattern())
                 && equals(consumerBody.getFormat(), providerBody.getFormat())
-                && compareEnum(dstType, consumerBody.getEnums(), providerBody.getEnums());
+                && compareEnum(dstType, consumerBody, providerBody);
     }
 
     private boolean compareSimpleTypeSchemaPart(SimpleTypeSchema consumerBody, SimpleTypeSchema providerBody) {
@@ -130,16 +129,40 @@ public class VauntValidator {
                 && equals(consumerBody.getExtends(), providerBody.getExtends());
     }
 
-    private boolean compareEnum(DestinationType dstType, Set<String> consumerEnums, Set<String> providerEnums) {
+    private boolean compareEnum(DestinationType dstType, StringSchema consumerBody, StringSchema providerBody) {
         switch (dstType) {
             case QUEUE:
             case TEMPORARY_QUEUE:
-                return providerEnums.containsAll(consumerEnums);
+                if (representsString(consumerBody) && representsEnum(providerBody)) {
+                    return false;
+                }
+
+                if (representsEnum(consumerBody) && representsEnum(providerBody)) {
+                    return providerBody.getEnums().containsAll(consumerBody.getEnums());
+                }
+
+                return true;
             case TOPIC:
-                return consumerEnums.containsAll(providerEnums);
+                if (representsString(providerBody) && representsEnum(consumerBody)) {
+                    return false;
+                }
+
+                if (representsEnum(providerBody) && representsEnum(consumerBody)) {
+                    return consumerBody.getEnums().containsAll(providerBody.getEnums());
+                }
+
+                return true;
             default:
                 throw new RuntimeException("Unknown JMS destination type"); // TODO: handle
         }
+    }
+
+    private boolean representsEnum(StringSchema body) {
+        return body.getEnums().size() > 0;
+    }
+
+    private boolean representsString(StringSchema body) {
+        return body.getEnums().size() == 0;
     }
 
     private boolean compareObjectSchema(DestinationType dstType, ObjectSchema consumerBody, ObjectSchema providerBody) {
