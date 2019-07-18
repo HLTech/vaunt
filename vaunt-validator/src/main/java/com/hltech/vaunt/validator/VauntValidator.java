@@ -10,7 +10,6 @@ import com.hltech.vaunt.core.domain.model.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VauntValidator {
@@ -30,23 +29,30 @@ public class VauntValidator {
 
     private ValidationResult validateWithMatchingProviderContract(Contract consumerContract,
                                                                   List<Contract> providerContracts) {
-        List<Contract> contracts = providerContracts.stream()
+        List<Contract> endpointMatchingContracts = providerContracts.stream()
                 .filter(providerContract -> isEndpointMatching(consumerContract, providerContract))
                 .collect(Collectors.toList());
 
-        if (contracts.isEmpty()) {
+        if (endpointMatchingContracts.isEmpty()) {
             return ValidationResult.failure(consumerContract, ValidationError.MISSING_ENDPOINT);
         }
 
-        Optional<Contract> matchingProviderContract = contracts.stream()
-                .filter(providerContract -> isSchemaAndIdMatching(consumerContract.getDestinationType(),
-                        consumerContract.getBody(), providerContract.getBody()))
-                .findFirst();
+        List<Contract> idMatchingContracts = endpointMatchingContracts.stream()
+                .filter(providerContract -> isIdMatching(consumerContract.getBody(), providerContract.getBody()))
+                .collect(Collectors.toList());
 
-        return matchingProviderContract
-                .map(contract -> ValidationResult.success(consumerContract))
-                .orElseGet(() -> ValidationResult.failure(consumerContract, contracts, ValidationError.WRONG_SCHEMA));
+        if (idMatchingContracts.isEmpty()) {
+            return ValidationResult.failure(consumerContract, ValidationError.MISSING_MESSAGE_WITH_NAME);
+        }
 
+        if (idMatchingContracts.size() > 1) {
+            return ValidationResult.failure(consumerContract, ValidationError.DUPLICATE_MATCH);
+        }
+
+        return isContentMatching(consumerContract.getDestinationType(),
+                consumerContract.getBody(),
+                idMatchingContracts.get(0).getBody()) ? ValidationResult.success(consumerContract)
+                : ValidationResult.failure(consumerContract, idMatchingContracts.get(0), ValidationError.WRONG_SCHEMA);
     }
 
     private boolean isEndpointMatching(Contract firstContract, Contract secondContract) {
@@ -68,15 +74,11 @@ public class VauntValidator {
         return firstContract.getDestinationName().equals(secondContract.getDestinationName());
     }
 
-    private boolean isSchemaAndIdMatching(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
-        if (!consumerBody.getId().equals(providerBody.getId())) {
-            return false;
-        }
-
-        return isSchemaMatching(dstType, consumerBody, providerBody);
+    private boolean isIdMatching(JsonSchema consumerBody, JsonSchema providerBody) {
+        return consumerBody.getId().equals(providerBody.getId());
     }
 
-    private boolean isSchemaMatching(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
+    private boolean isContentMatching(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
         if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
             return compareEnumSchema(dstType, consumerBody, providerBody);
         }
@@ -177,8 +179,7 @@ public class VauntValidator {
                                             Map<String, JsonSchema> providerProperties) {
         return consumerProperties.keySet().equals(providerProperties.keySet())
                 && consumerProperties.keySet().stream()
-                .allMatch(key -> isSchemaMatching(
-                        dstType, consumerProperties.get(key), providerProperties.get(key)));
+                .allMatch(key -> isContentMatching(dstType, consumerProperties.get(key), providerProperties.get(key)));
     }
 
     private boolean equals(Object object1, Object object2) {

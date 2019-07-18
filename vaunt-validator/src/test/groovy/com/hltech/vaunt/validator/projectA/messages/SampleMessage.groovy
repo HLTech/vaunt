@@ -11,6 +11,11 @@ class InnerMessage {
     BigDecimal amount
 }
 
+class AnotherSampleMessage {
+    String value
+    String amount
+}
+
 class EnumMessage {
     InnerEnum en
 
