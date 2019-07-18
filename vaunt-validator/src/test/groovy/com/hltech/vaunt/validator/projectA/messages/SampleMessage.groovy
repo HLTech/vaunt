@@ -12,7 +12,16 @@ class InnerMessage {
 }
 
 class EnumMessage {
+    InnerEnum en
 
+    enum InnerEnum {
+        A,
+        B,
+        C
+    }
+}
+
+class EnumStringMessage {
     InnerEnum en
 
     enum InnerEnum {

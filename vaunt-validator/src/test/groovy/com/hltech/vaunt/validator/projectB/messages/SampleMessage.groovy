@@ -23,7 +23,6 @@ class AnotherSampleMessage {
 }
 
 class EnumMessage {
-
     InnerEnum en
 
     enum InnerEnum {
@@ -32,4 +31,8 @@ class EnumMessage {
         C,
         D
     }
+}
+
+class EnumStringMessage {
+    String en
 }
