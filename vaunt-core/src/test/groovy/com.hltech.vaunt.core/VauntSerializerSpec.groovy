@@ -27,7 +27,7 @@ class VauntSerializerSpec extends Specification {
             new JsonSlurper().parseText(serializer.serializeSchema(schema)) == new JsonSlurper().parseText(expectedResponse())
     }
 
-    def 'Should correctly generate schema'() {
+    def 'Should correctly generate schema (and should not use ref unless object is of JsonSchema type (threat of StackOverflow)'() {
         expect:
             new JsonSlurper().parseText(serializer.serializeSchema(serializer.generateSchema(Message))) == new JsonSlurper().parseText(expectedResponse())
     }
@@ -134,8 +134,7 @@ class VauntSerializerSpec extends Specification {
                         "type":"string"
                     }
                 },
-                "inner":{
-                
+                "inner":{                
                     "type":"object",
                     "id":"InnerMessage",
                     "properties":{
@@ -145,8 +144,19 @@ class VauntSerializerSpec extends Specification {
                         "longg":{
                             "type":"integer"
                         }
-                    }
-                
+                    }                
+                },
+                "subinner":{                
+                    "type":"object",
+                    "id":"InnerMessage",
+                    "properties":{
+                        "string":{
+                            "type":"string"
+                        },
+                        "longg":{
+                            "type":"integer"
+                        }
+                    }                
                 }
             }
         }       
@@ -184,6 +194,7 @@ class VauntSerializerSpec extends Specification {
         Multimap<String, Contract> mapped
         List<String> listed
         InnerMessage inner
+        InnerMessage subinner
     }
 
     class AnotherMessage {

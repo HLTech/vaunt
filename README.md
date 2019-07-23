@@ -56,6 +56,8 @@ Enums:
 Values of each sent enum must be a subset of corresponding enum values expected to be received. Corresponding enum
 might be of String type as well.
 
+Vaunt-Generator does not use "ref" (i. e. uses inlining) with the exception of JsonSchema (threat of StackOverflow).
+
 ## Example of code snippet with test creating Vaunt contract
 ```
 @SpringBootTest

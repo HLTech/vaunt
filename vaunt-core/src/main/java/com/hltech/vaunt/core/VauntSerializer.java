@@ -16,6 +16,7 @@ import com.hltech.vaunt.core.domain.model.Contract;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 
 public class VauntSerializer {
@@ -30,12 +31,12 @@ public class VauntSerializer {
         mapper.registerModule(new JavaTimeModule());
 
         wrapper = new SchemaFactoryWrapper();
-        wrapper.setVisitorContext(new IdVisitorContext());
+        wrapper.setVisitorContext(new VauntVisitorContext());
         generator = new JsonSchemaGenerator(mapper, wrapper);
     }
 
     public JsonSchema generateSchema(Class<?> type) throws JsonMappingException {
-        wrapper.setVisitorContext(new IdVisitorContext());
+        wrapper.setVisitorContext(new VauntVisitorContext());
         return generator.generateSchema(type);
     }
 
@@ -61,7 +62,26 @@ public class VauntSerializer {
         mapper.writeValue(resultFile, value);
     }
 
-    class IdVisitorContext extends VisitorContext {
+    class VauntVisitorContext extends VisitorContext {
+
+        private final HashSet<JavaType> seenSchemas = new HashSet<>();
+
+        @Override
+        public String addSeenSchemaUri(JavaType seenSchema) {
+            if (seenSchema != null && !seenSchema.isPrimitive()) {
+                seenSchemas.add(seenSchema);
+                return javaTypeToUrn(seenSchema);
+            }
+            return null;
+        }
+
+        @Override
+        public String getSeenSchemaUri(JavaType seenSchema) {
+            if (seenSchema.isTypeOrSubTypeOf(JsonSchema.class)) {
+                return (seenSchemas.contains(seenSchema)) ? javaTypeToUrn(seenSchema) : null;
+            }
+            return null;
+        }
 
         @Override
         public String javaTypeToUrn(JavaType jt) {
