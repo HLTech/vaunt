@@ -1,11 +1,18 @@
 package com.hltech.vaunt.core
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema
+import com.fasterxml.jackson.module.jsonSchema.types.BooleanSchema
+import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema
+import com.fasterxml.jackson.module.jsonSchema.types.NumberSchema
+import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema
+import com.fasterxml.jackson.module.jsonSchema.types.ReferenceSchema
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Multimap
+import com.google.common.collect.Sets
 import com.hltech.vaunt.core.domain.model.Contract
 import com.hltech.vaunt.core.domain.model.DestinationType
 import groovy.json.JsonSlurper
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -13,23 +20,17 @@ import java.time.ZonedDateTime
 
 class VauntSerializerSpec extends Specification {
 
-    @Shared
-    def generator = new VauntSerializer().generator
-
     @Subject
     def serializer = new VauntSerializer()
 
     def 'Should correctly serialize schema'() {
-        given:
-            def schema = generator.generateSchema(Message)
-
         expect:
-            new JsonSlurper().parseText(serializer.serializeSchema(schema)) == new JsonSlurper().parseText(expectedResponse())
+            new JsonSlurper().parseText(serializer.serializeSchema(schema())) == new JsonSlurper().parseText(expectedResponse())
     }
 
     def 'Should correctly generate schema (and should not use ref unless object is of JsonSchema type (threat of StackOverflow)'() {
         expect:
-            new JsonSlurper().parseText(serializer.serializeSchema(serializer.generateSchema(Message))) == new JsonSlurper().parseText(expectedResponse())
+            serializer.generateSchema(Message) == schema()
     }
 
     def 'Should correctly generate schema without redundant $ref element'() {
@@ -60,6 +61,94 @@ class VauntSerializerSpec extends Specification {
             serializer.parseContracts(contract) == [new Contract(dstType, dstName, new StringSchema())]
     }
 
+    def schema() {
+        def schema = new ObjectSchema()
+        schema.setId(Message.getSimpleName())
+        schema.putOptionalProperty("string", new StringSchema())
+        schema.putOptionalProperty("zonedDateTime", new NumberSchema())
+        schema.putOptionalProperty("mapped", mappedPart())
+        schema.putOptionalProperty("listed", listedPart())
+        schema.putOptionalProperty("inner", innerPart())
+        schema.putOptionalProperty("subinner", subinnerPart())
+        return schema
+    }
+
+    def subinnerPart() {
+        def schema = new ObjectSchema()
+        schema.setId(InnerMessage.class.getSimpleName())
+        schema.putOptionalProperty("string", new StringSchema())
+        schema.putOptionalProperty("longg", new IntegerSchema())
+        return schema
+    }
+
+    def listedPart() {
+        def schema = new ArraySchema()
+        schema.setItems(new ArraySchema.SingleItems(new StringSchema()))
+        return schema
+    }
+
+    def innerPart() {
+        def schema = new ObjectSchema()
+        schema.setId(InnerMessage.class.getSimpleName())
+        schema.putOptionalProperty("string", new StringSchema())
+        schema.putOptionalProperty("longg", new IntegerSchema())
+        return schema
+    }
+
+    def mappedPart() {
+        def schema = new ObjectSchema()
+        schema.setAdditionalProperties(new ObjectSchema.SchemaAdditionalProperties(innerMappedPart()))
+        return schema
+    }
+
+    def innerMappedPart() {
+        def schema = new ArraySchema()
+        schema.setItems(new ArraySchema.SingleItems(innerItemsPart()))
+        return schema
+    }
+
+    def innerItemsPart() {
+        def schema = new ObjectSchema()
+        schema.setId(Contract.class.getSimpleName())
+        schema.putOptionalProperty("destinationType", destinationTypePart())
+        schema.putOptionalProperty("destinationName", new StringSchema())
+        schema.putOptionalProperty("body", bodyPart())
+        return schema
+    }
+
+    def destinationTypePart() {
+        def schema = new StringSchema()
+        schema.setEnums(Sets.newHashSet("QUEUE", "TOPIC", "TEMPORARY_QUEUE"))
+        return schema
+    }
+
+    def bodyPart() {
+        def schema = new ObjectSchema()
+        schema.setId(JsonSchema.class.getSimpleName())
+        schema.putOptionalProperty("id", new StringSchema())
+        schema.putOptionalProperty("\$ref", new StringSchema())
+        schema.putOptionalProperty("\$schema", new StringSchema())
+        schema.putOptionalProperty("disallow", disallowPart())
+        schema.putOptionalProperty("required", new BooleanSchema())
+        schema.putOptionalProperty("readonly", new BooleanSchema())
+        schema.putOptionalProperty("description", new StringSchema())
+        schema.putOptionalProperty("extends", extendsPart())
+        return schema
+    }
+
+    def disallowPart() {
+        def schema = new ArraySchema()
+        schema.setItems(new ArraySchema.SingleItems(new ReferenceSchema("JsonSchema")))
+        return schema
+    }
+
+    def extendsPart() {
+        def schema = new ArraySchema()
+        schema.setItems(new ArraySchema.SingleItems(new ReferenceSchema("JsonSchema")))
+        return schema
+    }
+
+
     def expectedResponse() {
         """
         {
@@ -81,7 +170,7 @@ class VauntSerializerSpec extends Specification {
                             "properties":{
                                 "destinationType":{
                                     "type":"string",
-                                    "enum":["QUEUE","TOPIC","TEMPORARY_QUEUE"]
+                                    "enum":["TOPIC","TEMPORARY_QUEUE","QUEUE"]
                                 },
                                 "destinationName":{
                                     "type":"string"
