@@ -31,7 +31,6 @@ public class VauntSerializer {
         mapper.registerModule(new JavaTimeModule());
 
         wrapper = new SchemaFactoryWrapper();
-        wrapper.setVisitorContext(new VauntVisitorContext());
         generator = new JsonSchemaGenerator(mapper, wrapper);
     }
 
