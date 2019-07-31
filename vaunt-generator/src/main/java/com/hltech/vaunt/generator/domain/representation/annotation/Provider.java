@@ -12,7 +12,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Provider {
+    String EMPTY = "empty";
 
     DestinationType destinationType();
     String destinationName();
+    String messageId() default EMPTY;
 }
