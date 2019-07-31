@@ -1,6 +1,7 @@
 package com.hltech.vaunt.generator.domain.representation;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.hltech.vaunt.core.VauntSerializer;
@@ -66,10 +67,16 @@ public class RepresentationExtractor {
 
     private Contract extractProviderContract(Class<?> providerMessage, Provider providerAnnotation, Properties props) {
         try {
+            JsonSchema body = serializer.generateSchema(providerMessage);
+
+            if (!providerAnnotation.messageId().equals(Provider.EMPTY)) {
+                body.setId(providerAnnotation.messageId());
+            }
+
             return new Contract(
                     providerAnnotation.destinationType(),
                     props.getProperty(providerAnnotation.destinationName(), providerAnnotation.destinationName()),
-                    serializer.generateSchema(providerMessage));
+                    body);
         } catch (JsonMappingException ex) {
             throw new RuntimeException("Unable to extract contract for given provider", ex);
         }
@@ -77,10 +84,16 @@ public class RepresentationExtractor {
 
     private Contract extractConsumerContract(Class<?> consumerMessage, Consumer consumerAnnotation, Properties props) {
         try {
+            JsonSchema body = serializer.generateSchema(consumerMessage);
+
+            if (!consumerAnnotation.messageId().equals(Consumer.EMPTY)) {
+                body.setId(consumerAnnotation.messageId());
+            }
+
             return new Contract(
                     consumerAnnotation.destinationType(),
                     props.getProperty(consumerAnnotation.destinationName(), consumerAnnotation.destinationName()),
-                    serializer.generateSchema(consumerMessage));
+                    body);
         } catch (JsonMappingException ex) {
             throw new RuntimeException("Unable to extract contract for given consumer", ex);
         }
