@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
+import com.fasterxml.jackson.module.jsonSchema.customProperties.ValidationSchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext;
 import com.google.common.collect.Lists;
@@ -30,7 +31,7 @@ public class VauntSerializer {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new JavaTimeModule());
 
-        wrapper = new SchemaFactoryWrapper();
+        wrapper = new ValidationSchemaFactoryWrapper();
         generator = new JsonSchemaGenerator(mapper, wrapper);
     }
 
