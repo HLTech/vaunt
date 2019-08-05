@@ -16,6 +16,7 @@ import groovy.json.JsonSlurper
 import spock.lang.Specification
 import spock.lang.Subject
 
+import javax.validation.constraints.Size
 import java.time.ZonedDateTime
 
 class VauntSerializerSpec extends Specification {
@@ -64,12 +65,19 @@ class VauntSerializerSpec extends Specification {
     def schema() {
         def schema = new ObjectSchema()
         schema.setId(Message.getSimpleName())
-        schema.putOptionalProperty("string", new StringSchema())
+        schema.putOptionalProperty("string", stringPart())
         schema.putOptionalProperty("zonedDateTime", new NumberSchema())
         schema.putOptionalProperty("mapped", mappedPart())
         schema.putOptionalProperty("listed", listedPart())
         schema.putOptionalProperty("inner", innerPart())
         schema.putOptionalProperty("subinner", subinnerPart())
+        return schema
+    }
+
+    def stringPart() {
+        def schema = new StringSchema()
+        schema.setMinLength(1)
+        schema.setMaxLength(3)
         return schema
     }
 
@@ -156,7 +164,9 @@ class VauntSerializerSpec extends Specification {
             "id":"Message",
             "properties":{
                 "string":{
-                    "type":"string"
+                    "type":"string",
+                    "maxLength":3,
+                    "minLength":1
                 },
                 "zonedDateTime":{
                     "type":"number"
@@ -278,6 +288,7 @@ class VauntSerializerSpec extends Specification {
     }
 
     class Message {
+        @Size(min = 1, max = 3)
         String string
         ZonedDateTime zonedDateTime
         Multimap<String, Contract> mapped
