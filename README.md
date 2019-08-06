@@ -41,6 +41,7 @@ As a result, Service 5 is the provider, service 6 is the consumer.
 A contract contains:
 * Provider's JMS destination type: topic/queue/temporary queue
 * Provider's JMS destination name (omitted in case of temporary queues)
+* Message id (by default name of the class representing message, can be customized)
 * JSON schema of a message exchanged between consumer and provider
 
 Capabilities of a provider should contain the contract.  
@@ -55,6 +56,8 @@ It is possible to provide properties with JMS destination names.
 Enums:
 Values of each sent enum must be a subset of corresponding enum values expected to be received. Corresponding enum
 might be of String type as well.
+
+Fields contained in message on provider side must be a superset of fields contained in message on consumer side.
 
 Vaunt-Generator does not use "ref" (i. e. uses inlining) with the exception of JsonSchema (threat of StackOverflow).
 

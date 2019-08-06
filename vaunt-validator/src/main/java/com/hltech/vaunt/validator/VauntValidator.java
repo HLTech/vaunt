@@ -90,6 +90,10 @@ public class VauntValidator {
         return consumerBody.equals(providerBody);
     }
 
+    private boolean isRequired(JsonSchema schema) {
+        return schema.getRequired() != null && schema.getRequired();
+    }
+
     private boolean isObjectSchema(JsonSchema schema) {
         return schema.asObjectSchema() != null;
     }
@@ -123,7 +127,7 @@ public class VauntValidator {
 
     private boolean compareJsonSchemaPart(JsonSchema consumerBody, JsonSchema providerBody) {
         return equals(consumerBody.getId(), providerBody.getId())
-                && equals(consumerBody.getRequired(), providerBody.getRequired())
+                && !isRequired(consumerBody) || isRequired(providerBody)
                 && equals(consumerBody.getReadonly(), providerBody.getReadonly())
                 && equals(consumerBody.get$ref(), providerBody.get$ref())
                 && equals(consumerBody.get$schema(), providerBody.get$schema())
@@ -171,13 +175,16 @@ public class VauntValidator {
         return equals(consumerBody.getAdditionalProperties(), providerBody.getAdditionalProperties())
                 && equals(consumerBody.getDependencies(), providerBody.getDependencies())
                 && equals(consumerBody.getPatternProperties(), providerBody.getPatternProperties())
+                && compareSimpleTypeSchemaPart(consumerBody.asSimpleTypeSchema(), providerBody.asSimpleTypeSchema())
+                && compareJsonSchemaPart(consumerBody, providerBody)
                 && compareObjectProperties(dstType, consumerBody.getProperties(), providerBody.getProperties());
     }
 
     private boolean compareObjectProperties(DestinationType dstType,
                                             Map<String, JsonSchema> consumerProperties,
                                             Map<String, JsonSchema> providerProperties) {
-        return consumerProperties.keySet().equals(providerProperties.keySet())
+
+        return providerProperties.keySet().containsAll(consumerProperties.keySet())
                 && consumerProperties.keySet().stream()
                 .allMatch(key -> isContentMatching(dstType, consumerProperties.get(key), providerProperties.get(key)));
     }
