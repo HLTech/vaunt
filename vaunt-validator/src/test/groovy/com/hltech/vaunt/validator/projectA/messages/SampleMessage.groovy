@@ -1,5 +1,7 @@
 package com.hltech.vaunt.validator.projectA.messages
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 class SampleMessage {
     String value
     int amount
@@ -34,4 +36,14 @@ class EnumStringMessage {
         B,
         C
     }
+}
+
+class SmallMessage {
+    String ab
+    int defg
+}
+
+class RequiredMessage {
+    @JsonProperty(required = true)
+    String ab
 }

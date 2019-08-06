@@ -10,6 +10,8 @@ import com.hltech.vaunt.core.domain.model.Expectations
 import com.hltech.vaunt.core.domain.model.Service
 import com.hltech.vaunt.validator.projectA.messages.EnumMessage
 import com.hltech.vaunt.validator.projectA.messages.EnumStringMessage
+import com.hltech.vaunt.validator.projectA.messages.RequiredMessage
+import com.hltech.vaunt.validator.projectA.messages.SmallMessage
 import com.hltech.vaunt.validator.projectB.messages.AnotherSampleMessage
 import com.hltech.vaunt.validator.projectB.messages.SampleMessage
 import spock.lang.Shared
@@ -432,6 +434,76 @@ class VauntValidatorSpec extends Specification {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(EnumStringMessage)
             def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumStringMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should not be wrong schema validation error'
+            validationResults.size() == 1
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+    }
+
+    def 'Provider JsonSchema should be able to contain superset of consumer JsonSchema fields'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(SmallMessage)
+            def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.SmallMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should be no validation error'
+            validationResults.size() == 1
+            validationResults[0].valid
+            validationResults[0].errors != null
+            validationResults[0].errors.size() == 0
+    }
+
+    def 'Consumer JsonSchema should not be able to contain superset of provider JsonSchema fields'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.SmallMessage)
+            def providerJsonSchema = serializer.generateSchema(SmallMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should not be wrong schema validation error'
+            validationResults.size() == 1
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+    }
+
+    def 'Provider JsonSchema should be able to contain required field when consumer JsonSchema does not contain similar not required field'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.RequiredMessage)
+            def providerJsonSchema = serializer.generateSchema(RequiredMessage)
+            def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
+            def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
+
+        when: 'expectations and capabilities are validated'
+            def validationResults = validator.validate(Lists.newArrayList(consumerContract), Lists.newArrayList(providerContract))
+
+        then: 'there should be no validation error'
+            validationResults.size() == 1
+            validationResults[0].valid
+            validationResults[0].errors != null
+            validationResults[0].errors.size() == 0
+    }
+
+    def 'Consumer JsonSchema should not be able to contain required field when provider JsonSchema does not contain similar not required field'() {
+        given: 'consumer and provider contracts'
+            def consumerJsonSchema = serializer.generateSchema(RequiredMessage)
+            def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.RequiredMessage)
             def consumerContract = new Contract(DestinationType.TOPIC, 'topic', consumerJsonSchema)
             def providerContract = new Contract(DestinationType.TOPIC, 'topic', providerJsonSchema)
 

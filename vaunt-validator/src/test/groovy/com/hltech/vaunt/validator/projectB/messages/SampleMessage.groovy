@@ -36,3 +36,13 @@ class EnumMessage {
 class EnumStringMessage {
     String en
 }
+
+class SmallMessage {
+    String ab
+    int defg
+    long abc
+}
+
+class RequiredMessage {
+    String ab
+}
