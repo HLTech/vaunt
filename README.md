@@ -53,11 +53,10 @@ other via composition might have different names (ids).
 
 It is possible to provide properties with JMS destination names.
 
-Enums:
-Values of each sent enum must be a subset of corresponding enum values expected to be received. Corresponding enum
-might be of String type as well.
-
-Fields contained in message on provider side must be a superset of fields contained in message on consumer side.
+Fields contained in message on provider side must be a superset of fields contained in message on consumer side. 
+Same applies to enums. Enum on provider side can be represented by String as well.
+It requires setting DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL in ObjectMapper (or equivalent)
+in producer and @JsonIgnoreProperties(ignoreUnknown = true) (or equivalent) in case of Strings.
 
 Vaunt-Generator does not use "ref" (i. e. uses inlining) with the exception of JsonSchema (threat of StackOverflow).
 

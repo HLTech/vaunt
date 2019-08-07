@@ -325,10 +325,9 @@ class VauntValidatorSpec extends Specification {
 
         then: 'there should be wrong schema validation error'
             validationResults.size() == 1
-            !validationResults[0].valid
-            validationResults[0].errors
-            validationResults[0].errors.size() == 1
-            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+            validationResults[0].valid
+            validationResults[0].errors != null
+            validationResults[0].errors.size() == 0
     }
 
     @Unroll
@@ -365,9 +364,10 @@ class VauntValidatorSpec extends Specification {
 
         then: 'there should not be wrong schema validation error'
             validationResults.size() == 1
-            validationResults[0].valid
-            validationResults[0].errors != null
-            validationResults[0].errors.size() == 0
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
     }
 
     @Unroll
@@ -392,7 +392,7 @@ class VauntValidatorSpec extends Specification {
             dstType << [DestinationType.QUEUE, DestinationType.TEMPORARY_QUEUE]
     }
 
-    def 'Capabilities with JsonSchema of a message containing enum and Expectations containing string in corresponding place should pass validation - dstType = topic'() {
+    def 'Capabilities with JsonSchema of a message containing enum and Expectations containing string in corresponding place should not pass validation - dstType = topic'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumStringMessage)
             def providerJsonSchema = serializer.generateSchema(EnumStringMessage)
@@ -404,9 +404,10 @@ class VauntValidatorSpec extends Specification {
 
         then: 'there should not be wrong schema validation error'
             validationResults.size() == 1
-            validationResults[0].valid
-            validationResults[0].errors != null
-            validationResults[0].errors.size() == 0
+            !validationResults[0].valid
+            validationResults[0].errors
+            validationResults[0].errors.size() == 1
+            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
     }
 
     @Unroll
@@ -430,7 +431,7 @@ class VauntValidatorSpec extends Specification {
             dstType << [DestinationType.QUEUE, DestinationType.TEMPORARY_QUEUE]
     }
 
-    def 'Expectations with JsonSchema of a message containing enum and Capabilities containing string in corresponding place should not pass validation - dstType = topic'() {
+    def 'Expectations with JsonSchema of a message containing enum and Capabilities containing string in corresponding place should pass validation - dstType = topic'() {
         given: 'consumer and provider contracts'
             def consumerJsonSchema = serializer.generateSchema(EnumStringMessage)
             def providerJsonSchema = serializer.generateSchema(com.hltech.vaunt.validator.projectB.messages.EnumStringMessage)
@@ -442,10 +443,9 @@ class VauntValidatorSpec extends Specification {
 
         then: 'there should not be wrong schema validation error'
             validationResults.size() == 1
-            !validationResults[0].valid
-            validationResults[0].errors
-            validationResults[0].errors.size() == 1
-            validationResults[0].errors[0] == ValidationError.WRONG_SCHEMA
+            validationResults[0].valid
+            validationResults[0].errors != null
+            validationResults[0].errors.size() == 0
     }
 
     def 'Provider JsonSchema should be able to contain superset of consumer JsonSchema fields'() {
