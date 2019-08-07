@@ -1,6 +1,7 @@
 package com.hltech.vaunt.validator;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.types.ContainerTypeSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
@@ -49,8 +50,7 @@ public class VauntValidator {
             return ValidationResult.failure(consumerContract, ValidationError.DUPLICATE_MATCH);
         }
 
-        return isContentMatching(consumerContract.getDestinationType(),
-                consumerContract.getBody(),
+        return isContentMatching(consumerContract.getBody(),
                 idMatchingContracts.get(0).getBody()) ? ValidationResult.success(consumerContract)
                 : ValidationResult.failure(consumerContract, idMatchingContracts.get(0), ValidationError.WRONG_SCHEMA);
     }
@@ -78,13 +78,13 @@ public class VauntValidator {
         return consumerBody.getId().equals(providerBody.getId());
     }
 
-    private boolean isContentMatching(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
+    private boolean isContentMatching(JsonSchema consumerBody, JsonSchema providerBody) {
         if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
-            return compareEnumSchema(dstType, consumerBody, providerBody);
+            return compareEnumSchema(consumerBody, providerBody);
         }
 
         if (isObjectSchema(consumerBody) && isObjectSchema(providerBody)) {
-            return compareObjectSchema(dstType, consumerBody.asObjectSchema(), providerBody.asObjectSchema());
+            return compareObjectSchema(consumerBody.asObjectSchema(), providerBody.asObjectSchema());
         }
 
         return consumerBody.equals(providerBody);
@@ -102,20 +102,18 @@ public class VauntValidator {
         return schema.asStringSchema() != null;
     }
 
-    private boolean compareEnumSchema(DestinationType dstType, JsonSchema consumerBody, JsonSchema providerBody) {
-        return compareStringSchemaPart(dstType, consumerBody.asStringSchema(), providerBody.asStringSchema())
+    private boolean compareEnumSchema(JsonSchema consumerBody, JsonSchema providerBody) {
+        return compareStringSchemaPart(consumerBody.asStringSchema(), providerBody.asStringSchema())
                 && compareSimpleTypeSchemaPart(consumerBody.asSimpleTypeSchema(), providerBody.asSimpleTypeSchema())
                 && compareJsonSchemaPart(consumerBody, providerBody);
     }
 
-    private boolean compareStringSchemaPart(DestinationType dstType,
-                                            StringSchema consumerBody,
-                                            StringSchema providerBody) {
+    private boolean compareStringSchemaPart(StringSchema consumerBody, StringSchema providerBody) {
         return equals(consumerBody.getMaxLength(), providerBody.getMaxLength())
                 && equals(consumerBody.getMinLength(), providerBody.getMinLength())
                 && equals(consumerBody.getPattern(), providerBody.getPattern())
                 && equals(consumerBody.getFormat(), providerBody.getFormat())
-                && compareEnum(dstType, consumerBody, providerBody);
+                && compareEnum(consumerBody, providerBody);
     }
 
     private boolean compareSimpleTypeSchemaPart(SimpleTypeSchema consumerBody, SimpleTypeSchema providerBody) {
@@ -135,32 +133,21 @@ public class VauntValidator {
                 && equals(consumerBody.getExtends(), providerBody.getExtends());
     }
 
-    private boolean compareEnum(DestinationType dstType, StringSchema consumerBody, StringSchema providerBody) {
-        switch (dstType) {
-            case QUEUE:
-            case TEMPORARY_QUEUE:
-                if (representsString(consumerBody) && representsEnum(providerBody)) {
-                    return false;
-                }
+    private boolean compareContainerTypeSchemaPart(ContainerTypeSchema consumerBody, ContainerTypeSchema providerBody) {
+        return equals(consumerBody.getEnums(), providerBody.getEnums())
+                && equals(consumerBody.getOneOf(), providerBody.getOneOf());
+    }
 
-                if (representsEnum(consumerBody) && representsEnum(providerBody)) {
-                    return providerBody.getEnums().containsAll(consumerBody.getEnums());
-                }
-
-                return true;
-            case TOPIC:
-                if (representsString(providerBody) && representsEnum(consumerBody)) {
-                    return false;
-                }
-
-                if (representsEnum(providerBody) && representsEnum(consumerBody)) {
-                    return consumerBody.getEnums().containsAll(providerBody.getEnums());
-                }
-
-                return true;
-            default:
-                throw new RuntimeException("Unknown JMS destination type"); // TODO: handle
+    private boolean compareEnum(StringSchema consumerBody, StringSchema providerBody) {
+        if (representsString(consumerBody) && representsEnum(providerBody)) {
+            return false;
         }
+
+        if (representsEnum(consumerBody) && representsEnum(providerBody)) {
+            return providerBody.getEnums().containsAll(consumerBody.getEnums());
+        }
+
+        return true;
     }
 
     private boolean representsEnum(StringSchema body) {
@@ -171,22 +158,22 @@ public class VauntValidator {
         return body.getEnums().size() == 0;
     }
 
-    private boolean compareObjectSchema(DestinationType dstType, ObjectSchema consumerBody, ObjectSchema providerBody) {
+    private boolean compareObjectSchema(ObjectSchema consumerBody, ObjectSchema providerBody) {
         return equals(consumerBody.getAdditionalProperties(), providerBody.getAdditionalProperties())
                 && equals(consumerBody.getDependencies(), providerBody.getDependencies())
                 && equals(consumerBody.getPatternProperties(), providerBody.getPatternProperties())
-                && compareSimpleTypeSchemaPart(consumerBody.asSimpleTypeSchema(), providerBody.asSimpleTypeSchema())
+                && compareContainerTypeSchemaPart(consumerBody, providerBody)
+                && compareSimpleTypeSchemaPart(consumerBody, providerBody)
                 && compareJsonSchemaPart(consumerBody, providerBody)
-                && compareObjectProperties(dstType, consumerBody.getProperties(), providerBody.getProperties());
+                && compareObjectProperties(consumerBody.getProperties(), providerBody.getProperties());
     }
 
-    private boolean compareObjectProperties(DestinationType dstType,
-                                            Map<String, JsonSchema> consumerProperties,
+    private boolean compareObjectProperties(Map<String, JsonSchema> consumerProperties,
                                             Map<String, JsonSchema> providerProperties) {
 
         return providerProperties.keySet().containsAll(consumerProperties.keySet())
                 && consumerProperties.keySet().stream()
-                .allMatch(key -> isContentMatching(dstType, consumerProperties.get(key), providerProperties.get(key)));
+                .allMatch(key -> isContentMatching(consumerProperties.get(key), providerProperties.get(key)));
     }
 
     private boolean equals(Object object1, Object object2) {
