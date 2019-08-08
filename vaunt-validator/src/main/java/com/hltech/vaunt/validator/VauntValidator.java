@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ContainerTypeSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
-import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
@@ -80,7 +79,8 @@ public class VauntValidator {
 
     private boolean isContentMatching(JsonSchema consumerBody, JsonSchema providerBody) {
         if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
-            return compareEnumSchema(consumerBody, providerBody);
+            return StringSchemaValidator.validate(
+                    consumerBody.asStringSchema(), providerBody.asStringSchema()).size() == 0;
         }
 
         if (isObjectSchema(consumerBody) && isObjectSchema(providerBody)) {
@@ -100,20 +100,6 @@ public class VauntValidator {
 
     private boolean isStringSchema(JsonSchema schema) {
         return schema.asStringSchema() != null;
-    }
-
-    private boolean compareEnumSchema(JsonSchema consumerBody, JsonSchema providerBody) {
-        return compareStringSchemaPart(consumerBody.asStringSchema(), providerBody.asStringSchema())
-                && compareSimpleTypeSchemaPart(consumerBody.asSimpleTypeSchema(), providerBody.asSimpleTypeSchema())
-                && compareJsonSchemaPart(consumerBody, providerBody);
-    }
-
-    private boolean compareStringSchemaPart(StringSchema consumerBody, StringSchema providerBody) {
-        return equals(consumerBody.getMaxLength(), providerBody.getMaxLength())
-                && equals(consumerBody.getMinLength(), providerBody.getMinLength())
-                && equals(consumerBody.getPattern(), providerBody.getPattern())
-                && equals(consumerBody.getFormat(), providerBody.getFormat())
-                && compareEnum(consumerBody, providerBody);
     }
 
     private boolean compareSimpleTypeSchemaPart(SimpleTypeSchema consumerBody, SimpleTypeSchema providerBody) {
@@ -136,26 +122,6 @@ public class VauntValidator {
     private boolean compareContainerTypeSchemaPart(ContainerTypeSchema consumerBody, ContainerTypeSchema providerBody) {
         return equals(consumerBody.getEnums(), providerBody.getEnums())
                 && equals(consumerBody.getOneOf(), providerBody.getOneOf());
-    }
-
-    private boolean compareEnum(StringSchema consumerBody, StringSchema providerBody) {
-        if (representsString(consumerBody) && representsEnum(providerBody)) {
-            return false;
-        }
-
-        if (representsEnum(consumerBody) && representsEnum(providerBody)) {
-            return providerBody.getEnums().containsAll(consumerBody.getEnums());
-        }
-
-        return true;
-    }
-
-    private boolean representsEnum(StringSchema body) {
-        return body.getEnums().size() > 0;
-    }
-
-    private boolean representsString(StringSchema body) {
-        return body.getEnums().size() == 0;
     }
 
     private boolean compareObjectSchema(ObjectSchema consumerBody, ObjectSchema providerBody) {
