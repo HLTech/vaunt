@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
+import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT_SHORT;
 
 public class SimpleTypeSchemaValidator {
 
@@ -23,11 +24,9 @@ public class SimpleTypeSchemaValidator {
         }
 
         if (!arraysEquals(consumerSchema.getLinks(), providerSchema.getLinks())) {
-            errors.add(String.format(ERROR_FORMAT,
+            errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerSchema.getId(),
-                    "links",
-                    listDescriptionObjectsToString(consumerSchema.getLinks()),
-                    listDescriptionObjectsToString(providerSchema.getLinks())));
+                    "links"));
         }
 
         if (!equals(consumerSchema.getPathStart(), providerSchema.getPathStart())) {
@@ -57,7 +56,7 @@ public class SimpleTypeSchemaValidator {
         }
     }
 
-    private static <T> boolean arraysEquals(LinkDescriptionObject[] array1, LinkDescriptionObject[] array2) {
+    private static boolean arraysEquals(LinkDescriptionObject[] array1, LinkDescriptionObject[] array2) {
         if (array1 == null) {
             return array2 == null;
         }
@@ -88,39 +87,5 @@ public class SimpleTypeSchemaValidator {
                 && Objects.equals(ob1.getSchema(), ob2.getSchema())
                 && Objects.equals(ob1.getTitle(), ob2.getTitle())
                 && Objects.equals(ob1.getMediaType(), ob2.getMediaType());
-    }
-
-    private static String listDescriptionObjectsToString(LinkDescriptionObject[] array) {
-        if (array == null) {
-            return "null";
-        }
-
-        int inMax = array.length - 1;
-        if (inMax == -1) {
-            return "[]";
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('[');
-        for (int i = 0; ; i++) {
-            stringBuilder.append(listDescriptionObjectToString(array[i]));
-            if (i == inMax) {
-                return stringBuilder.append(']').toString();
-            }
-            stringBuilder.append(", ");
-        }
-    }
-
-    private static String listDescriptionObjectToString(LinkDescriptionObject li) {
-        return "LinkDescriptionObject("
-                + "href=" + li.getHref()
-                + ", rel=" + li.getRel()
-                + ", targetSchema=" + li.getTargetSchema()
-                + ", method=" + li.getMethod()
-                + ", enctype=" + li.getEnctype()
-                + ", jsonSchema=" + li.getSchema()
-                + ", title=" + li.getTitle()
-                + ", mediaType=" + li.getMediaType()
-                + ")";
     }
 }

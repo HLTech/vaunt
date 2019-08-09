@@ -8,6 +8,7 @@ import java.util.List;
 
 public class JsonSchemaValidator {
     static final String ERROR_FORMAT = "Schema with id %s has not matching %s - consumer: %s, provider: %s";
+    static final String ERROR_FORMAT_SHORT = "Schema with id %s has not matching %s";
 
     public static List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
         List<String> errors = new ArrayList<>();
@@ -32,16 +33,16 @@ public class JsonSchemaValidator {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "disallow",
-                    jsonArraysToString(consumerSchema.getDisallow()),
-                    jsonArraysToString(providerSchema.getDisallow())));
+                    jsonArrayToString(consumerSchema.getDisallow()),
+                    jsonArrayToString(providerSchema.getDisallow())));
         }
 
         if (!arraysEquals(consumerSchema.getExtends(), providerSchema.getExtends())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "extends",
-                    jsonArraysToString(consumerSchema.getExtends()),
-                    jsonArraysToString(providerSchema.getExtends())));
+                    jsonArrayToString(consumerSchema.getExtends()),
+                    jsonArrayToString(providerSchema.getExtends())));
         }
 
         if (isRequired(consumerSchema) && !isRequired(providerSchema)) {
@@ -94,7 +95,7 @@ public class JsonSchemaValidator {
         return Arrays.equals(array1, array2);
     }
 
-    private static String jsonArraysToString(JsonSchema[] array) {
+    private static String jsonArrayToString(JsonSchema[] array) {
         if (array == null) {
             return "null";
         }
@@ -107,7 +108,7 @@ public class JsonSchemaValidator {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append('[');
         for (int i = 0; ; i++) {
-            stringBuilder.append(jsonArrayToString(array[i]));
+            stringBuilder.append(jsonToString(array[i]));
             if (i == inMax) {
                 return stringBuilder.append(']').toString();
             }
@@ -115,7 +116,7 @@ public class JsonSchemaValidator {
         }
     }
 
-    private static String jsonArrayToString(JsonSchema object) {
-        return "id=" + object.getId();
+    private static String jsonToString(JsonSchema object) {
+        return "JsonSchema(id=" + object.getId() + ")";
     }
 }
