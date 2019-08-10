@@ -1,4 +1,4 @@
-package com.hltech.vaunt.validator;
+package com.hltech.vaunt.validator.schema;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema;
