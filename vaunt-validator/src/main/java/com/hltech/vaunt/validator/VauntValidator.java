@@ -74,22 +74,6 @@ public class VauntValidator {
     }
 
     private boolean isContentMatching(JsonSchema consumerBody, JsonSchema providerBody) {
-        if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
-            return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
-        }
-
-        if (isObjectSchema(consumerBody) && isObjectSchema(providerBody)) {
-            return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
-        }
-
-        return consumerBody.equals(providerBody);
-    }
-
-    private boolean isObjectSchema(JsonSchema schema) {
-        return schema.asObjectSchema() != null;
-    }
-
-    private boolean isStringSchema(JsonSchema schema) {
-        return schema.asStringSchema() != null;
+        return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
     }
 }
