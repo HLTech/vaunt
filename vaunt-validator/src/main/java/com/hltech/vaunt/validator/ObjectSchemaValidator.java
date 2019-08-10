@@ -4,51 +4,58 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT_SHORT;
+public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
+    private static final String UNMATCHING_SCHEMA_TYPE =
+            "Consumer schema with id %s and type %s does not match provider schema with id %s and name %s";
 
-public class ObjectSchemaValidator {
+    @Override
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        List<String> errors = super.validate(consumerSchema, providerSchema);
 
-    public static List<String> validate(ObjectSchema consumerSchema, ObjectSchema providerSchema) {
-        List<String> errors = new ArrayList<>(ContainerTypeSchemaValidator.validate(consumerSchema, providerSchema));
+        ObjectSchema consumerObjectSchema = consumerSchema.asObjectSchema();
+        ObjectSchema providerObjectSchema = providerSchema.asObjectSchema();
 
-        if (!equals(consumerSchema.getAdditionalProperties(), providerSchema.getAdditionalProperties())) {
+        if (!equals(consumerObjectSchema.getAdditionalProperties(), providerObjectSchema.getAdditionalProperties())) {
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerSchema.getId(),
                     "additionalProperties"));
         }
 
-        if (!equals(consumerSchema.getDependencies(), providerSchema.getDependencies())) {
+        if (!equals(consumerObjectSchema.getDependencies(), providerObjectSchema.getDependencies())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "dependencies",
-                    consumerSchema.getDependencies(),
-                    providerSchema.getDependencies()));
+                    consumerObjectSchema.getDependencies(),
+                    providerObjectSchema.getDependencies()));
         }
 
-        if (!equals(consumerSchema.getPatternProperties(), providerSchema.getPatternProperties())) {
+        if (!equals(consumerObjectSchema.getPatternProperties(), providerObjectSchema.getPatternProperties())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "patternProperties",
-                    mapToString(consumerSchema.getPatternProperties()),
-                    mapToString(providerSchema.getPatternProperties())));
+                    mapToString(consumerObjectSchema.getPatternProperties()),
+                    mapToString(providerObjectSchema.getPatternProperties())));
         }
 
         errors.addAll(compareObjectProperties(
                 consumerSchema.getId(),
-                consumerSchema.getProperties(),
-                providerSchema.getProperties()));
+                consumerObjectSchema.getProperties(),
+                providerObjectSchema.getProperties()));
 
         return errors;
     }
 
-    private static List<String> compareObjectProperties(String id, Map<String, JsonSchema> consumerProperties,
+    @Override
+    public Class<ObjectSchema> supportsSchemaType() {
+        return ObjectSchema.class;
+    }
+
+    private List<String> compareObjectProperties(String id, Map<String, JsonSchema> consumerProperties,
                                             Map<String, JsonSchema> providerProperties) {
 
         if (!providerProperties.keySet().containsAll(consumerProperties.keySet())) {
@@ -61,24 +68,27 @@ public class ObjectSchemaValidator {
         }
 
         return consumerProperties.keySet().stream()
-                .flatMap(key -> VauntSchemaValidator.validate(
-                        consumerProperties.get(key), providerProperties.get(key)).stream())
+                .flatMap(key -> vslidateProperty(consumerProperties.get(key), providerProperties.get(key)).stream())
                 .collect(Collectors.toList());
     }
 
-    private static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
+    private List<String> vslidateProperty(JsonSchema consumerProperty, JsonSchema providerProperty) {
+        return consumerProperty.getClass() == providerProperty.getClass()
+                ? VauntSchemaValidator.validate(consumerProperty, providerProperty)
+                : Lists.newArrayList(String.format(
+                        UNMATCHING_SCHEMA_TYPE,
+                        consumerProperty.getId(),
+                        consumerProperty.getClass().getSimpleName(),
+                        providerProperty.getId(),
+                        providerProperty.getClass().getSimpleName()));
     }
 
-    private static String mapToString(Map<String, JsonSchema> props) {
-        int max = props.size() - 1;
-        if (max == -1) {
+    private String mapToString(Map<String, JsonSchema> props) {
+        if (props.isEmpty()) {
             return "{}";
         }
+
+        int max = props.size() - 1;
 
         StringBuilder sb = new StringBuilder();
         Iterator<Map.Entry<String, JsonSchema>> it = props.entrySet().iterator();
@@ -95,9 +105,5 @@ public class ObjectSchemaValidator {
             }
             sb.append(", ");
         }
-    }
-
-    private static String jsonToString(JsonSchema object) {
-        return "JsonSchema(id=" + object.getId() + ")";
     }
 }

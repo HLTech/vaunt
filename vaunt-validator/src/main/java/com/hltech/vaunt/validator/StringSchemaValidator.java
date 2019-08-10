@@ -1,49 +1,48 @@
 package com.hltech.vaunt.validator;
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
+public class StringSchemaValidator extends ValueTypeSchemaValidator {
 
-public class StringSchemaValidator {
+    @Override
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        List<String> errors = super.validate(consumerSchema, providerSchema);
 
-    public static List<String> validate(StringSchema consumerSchema, StringSchema providerSchema) {
-        List<String> errors = new ArrayList<>(ValueTypeSchemaValidator.validate(consumerSchema, providerSchema));
+        StringSchema consumerStringSchema = consumerSchema.asStringSchema();
+        StringSchema providerStringSchema = providerSchema.asStringSchema();
 
-        if (!equals(consumerSchema.getMinLength(), providerSchema.getMinLength())) {
+        if (!equals(consumerStringSchema.getMinLength(), providerStringSchema.getMinLength())) {
             errors.add(String.format(ERROR_FORMAT,
-                    consumerSchema.getId(),
+                    consumerStringSchema.getId(),
                     "minLength",
-                    consumerSchema.getMinLength(),
-                    providerSchema.getMinLength()));
+                    consumerStringSchema.getMinLength(),
+                    providerStringSchema.getMinLength()));
         }
 
-        if (!equals(consumerSchema.getMaxLength(), providerSchema.getMaxLength())) {
+        if (!equals(consumerStringSchema.getMaxLength(), providerStringSchema.getMaxLength())) {
             errors.add(String.format(ERROR_FORMAT,
-                    consumerSchema.getId(),
+                    consumerStringSchema.getId(),
                     "maxLength",
-                    consumerSchema.getMaxLength(),
-                    providerSchema.getMaxLength()));
+                    consumerStringSchema.getMaxLength(),
+                    providerStringSchema.getMaxLength()));
         }
 
-        if (!equals(consumerSchema.getPattern(), providerSchema.getPattern())) {
+        if (!equals(consumerStringSchema.getPattern(), providerStringSchema.getPattern())) {
             errors.add(String.format(ERROR_FORMAT,
-                    consumerSchema.getId(),
+                    consumerStringSchema.getId(),
                     "pattern",
-                    consumerSchema.getPattern(),
-                    providerSchema.getPattern()));
+                    consumerStringSchema.getPattern(),
+                    providerStringSchema.getPattern()));
         }
 
         return errors;
     }
 
-    private static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
+    @Override
+    public Class<?> supportsSchemaType() {
+        return StringSchema.class;
     }
 }

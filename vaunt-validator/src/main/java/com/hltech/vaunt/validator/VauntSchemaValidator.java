@@ -1,39 +1,34 @@
 package com.hltech.vaunt.validator;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class VauntSchemaValidator {
 
+    private static final Set<JsonSchemaValidator> schemaValidators = new HashSet<>();
+
+    static {
+        schemaValidators.addAll(Sets.newHashSet(
+                new StringSchemaValidator(),
+                new ObjectSchemaValidator(),
+                new BooleanSchemaValidator(),
+                new IntegerSchemaValidator(),
+                new NumberSchemaValidator()
+        ));
+    }
+
     public static List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        JsonSchemaValidator matchingValidator = schemaValidators.stream()
+                .filter(v -> v.supportsSchemaType().equals(consumerSchema.getClass()))
+                .filter(v -> v.supportsSchemaType().equals(providerSchema.getClass()))
+                .findAny()
+                .orElseThrow(() -> new RuntimeException(
+                        "Exactly one validator should exist for consumer and provider"));
 
-        if (consumerSchema.isBooleanSchema() && providerSchema.isBooleanSchema()) {
-            return new ArrayList<>();
-        }
-
-        if (consumerSchema.isIntegerSchema() && providerSchema.isIntegerSchema()) {
-            return new ArrayList<>();
-        }
-
-        if (consumerSchema.isNumberSchema() && providerSchema.isNumberSchema()) {
-            return new ArrayList<>();
-        }
-
-        if (consumerSchema.isStringSchema() && providerSchema.isStringSchema()) {
-            return StringSchemaValidator.validate(consumerSchema.asStringSchema(), providerSchema.asStringSchema());
-        }
-
-        if (consumerSchema.isArraySchema() && providerSchema.isArraySchema()) {
-            return new ArrayList<>();
-        }
-
-        if (consumerSchema.isObjectSchema() && providerSchema.isObjectSchema()) {
-            return ObjectSchemaValidator.validate(consumerSchema.asObjectSchema(), providerSchema.asObjectSchema());
-        }
-
-        return Lists.newArrayList("error");
+        return matchingValidator.validate(consumerSchema, providerSchema);
     }
 }

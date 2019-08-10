@@ -1,42 +1,36 @@
 package com.hltech.vaunt.validator;
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ContainerTypeSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
+public abstract class ContainerTypeSchemaValidator extends SimpleTypeSchemaValidator {
 
-public class ContainerTypeSchemaValidator {
+    @Override
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        List<String> errors = super.validate(consumerSchema, providerSchema);
 
-    public static List<String> validate(ContainerTypeSchema consumerSchema, ContainerTypeSchema providerSchema) {
-        List<String> errors = new ArrayList<>(SimpleTypeSchemaValidator.validate(consumerSchema, providerSchema));
+        ContainerTypeSchema consumerContainerTypeSchema = consumerSchema.asContainerTypeSchema();
+        ContainerTypeSchema providerContainerTypeSchema = providerSchema.asContainerTypeSchema();
 
-        if (!isValidEnum(consumerSchema, providerSchema)) {
+        if (!isValidEnum(consumerContainerTypeSchema, providerContainerTypeSchema)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "enums",
-                    consumerSchema.getEnums(),
-                    providerSchema.getEnums()));
+                    consumerContainerTypeSchema.getEnums(),
+                    providerContainerTypeSchema.getEnums()));
         }
 
-        if (!equals(consumerSchema.getOneOf(), providerSchema.getOneOf())) {
+        if (!equals(consumerContainerTypeSchema.getOneOf(), providerContainerTypeSchema.getOneOf())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "oneOf",
-                    consumerSchema.getOneOf(),
-                    providerSchema.getOneOf()));
+                    consumerContainerTypeSchema.getOneOf(),
+                    providerContainerTypeSchema.getOneOf()));
         }
 
         return errors;
-    }
-
-    private static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
     }
 
     private static boolean isValidEnum(ContainerTypeSchema consumerBody, ContainerTypeSchema providerBody) {

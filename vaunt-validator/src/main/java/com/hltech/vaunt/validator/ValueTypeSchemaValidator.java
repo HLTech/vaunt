@@ -1,45 +1,39 @@
 package com.hltech.vaunt.validator;
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ValueTypeSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
+public abstract class ValueTypeSchemaValidator extends SimpleTypeSchemaValidator {
 
-public class ValueTypeSchemaValidator {
+    @Override
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        List<String> errors = super.validate(consumerSchema, providerSchema);
 
-    public static List<String> validate(ValueTypeSchema consumerSchema, ValueTypeSchema providerSchema) {
-        List<String> errors = new ArrayList<>(SimpleTypeSchemaValidator.validate(consumerSchema, providerSchema));
+        ValueTypeSchema consumerValueTypeSchema = consumerSchema.asValueTypeSchema();
+        ValueTypeSchema providerValueTypeSchema = providerSchema.asValueTypeSchema();
 
-        if (!isValidEnum(consumerSchema, providerSchema)) {
+        if (!isValidEnum(consumerValueTypeSchema, providerValueTypeSchema)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "enums",
-                    consumerSchema.getEnums(),
-                    providerSchema.getEnums()));
+                    consumerValueTypeSchema.getEnums(),
+                    providerValueTypeSchema.getEnums()));
         }
 
-        if (!equals(consumerSchema.getFormat(), providerSchema.getFormat())) {
+        if (!equals(consumerValueTypeSchema.getFormat(), providerValueTypeSchema.getFormat())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "format",
-                    consumerSchema.getFormat(),
-                    providerSchema.getFormat()));
+                    consumerValueTypeSchema.getFormat(),
+                    providerValueTypeSchema.getFormat()));
         }
 
         return errors;
     }
 
-    private static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
-    }
-
-    private static boolean isValidEnum(ValueTypeSchema consumerBody, ValueTypeSchema providerBody) {
+    private boolean isValidEnum(ValueTypeSchema consumerBody, ValueTypeSchema providerBody) {
         if (representsString(consumerBody) && representsEnum(providerBody)) {
             return false;
         }
@@ -51,11 +45,11 @@ public class ValueTypeSchemaValidator {
         return true;
     }
 
-    private static boolean representsEnum(ValueTypeSchema body) {
+    private boolean representsEnum(ValueTypeSchema body) {
         return body.getEnums().size() > 0;
     }
 
-    private static boolean representsString(ValueTypeSchema body) {
+    private boolean representsString(ValueTypeSchema body) {
         return body.getEnums().size() == 0;
     }
 }

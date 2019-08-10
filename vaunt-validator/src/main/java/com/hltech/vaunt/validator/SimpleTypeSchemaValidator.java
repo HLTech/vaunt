@@ -1,62 +1,55 @@
 package com.hltech.vaunt.validator;
 
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.LinkDescriptionObject;
 import com.fasterxml.jackson.module.jsonSchema.types.SimpleTypeSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT;
-import static com.hltech.vaunt.validator.JsonSchemaValidator.ERROR_FORMAT_SHORT;
+public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
 
-public class SimpleTypeSchemaValidator {
+    @Override
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+        List<String> errors = super.validate(consumerSchema, providerSchema);
 
-    public static List<String> validate(SimpleTypeSchema consumerSchema, SimpleTypeSchema providerSchema) {
-        List<String> errors = new ArrayList<>(JsonSchemaValidator.validate(consumerSchema, providerSchema));
+        SimpleTypeSchema consumerSimpleTypeSchema = consumerSchema.asSimpleTypeSchema();
+        SimpleTypeSchema providerSimpleTypeSchema = providerSchema.asSimpleTypeSchema();
 
-        if (!equals(consumerSchema.getDefault(), providerSchema.getDefault())) {
+        if (!equals(consumerSimpleTypeSchema.getDefault(), providerSimpleTypeSchema.getDefault())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "default",
-                    consumerSchema.getDefault(),
-                    providerSchema.getDefault()));
+                    consumerSimpleTypeSchema.getDefault(),
+                    providerSimpleTypeSchema.getDefault()));
         }
 
-        if (!arraysEquals(consumerSchema.getLinks(), providerSchema.getLinks())) {
+        if (!linkDescriptionArraysEquals(consumerSimpleTypeSchema.getLinks(), providerSimpleTypeSchema.getLinks())) {
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerSchema.getId(),
                     "links"));
         }
 
-        if (!equals(consumerSchema.getPathStart(), providerSchema.getPathStart())) {
+        if (!equals(consumerSimpleTypeSchema.getPathStart(), providerSimpleTypeSchema.getPathStart())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "pathStart",
-                    consumerSchema.getPathStart(),
-                    providerSchema.getPathStart()));
+                    consumerSimpleTypeSchema.getPathStart(),
+                    providerSimpleTypeSchema.getPathStart()));
         }
 
-        if (!equals(consumerSchema.getTitle(), providerSchema.getTitle())) {
+        if (!equals(consumerSimpleTypeSchema.getTitle(), providerSimpleTypeSchema.getTitle())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "title",
-                    consumerSchema.getTitle(),
-                    providerSchema.getTitle()));
+                    consumerSimpleTypeSchema.getTitle(),
+                    providerSimpleTypeSchema.getTitle()));
         }
 
         return errors;
     }
 
-    private static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
-    }
-
-    private static boolean arraysEquals(LinkDescriptionObject[] array1, LinkDescriptionObject[] array2) {
+    private static boolean linkDescriptionArraysEquals(LinkDescriptionObject[] array1, LinkDescriptionObject[] array2) {
         if (array1 == null) {
             return array2 == null;
         }

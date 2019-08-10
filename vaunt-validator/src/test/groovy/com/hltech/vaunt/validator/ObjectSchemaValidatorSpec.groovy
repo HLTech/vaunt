@@ -6,9 +6,13 @@ import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Sets
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Unroll
 
 class ObjectSchemaValidatorSpec extends Specification {
+
+    @Subject
+    def validator = new ObjectSchemaValidator()
 
     def 'Should return no errors for the same ObjectSchemas'() {
         given:
@@ -16,13 +20,13 @@ class ObjectSchemaValidatorSpec extends Specification {
             ObjectSchema providerSchema = getSampleSchema()
 
         expect:
-            ObjectSchemaValidator.validate(consumerSchema, providerSchema).size() == 0
+            validator.validate(consumerSchema, providerSchema).size() == 0
     }
 
     @Unroll
     def 'Should return error for consumer ObjectSchema being different in #field from producer ObjectSchema'() {
         when:
-            def resultList = ObjectSchemaValidator.validate(consumerSchema, providerSchema)
+            def resultList = validator.validate(consumerSchema, providerSchema)
 
         then:
             resultList.size() == 1
@@ -61,7 +65,7 @@ class ObjectSchemaValidatorSpec extends Specification {
             providerSchema.setEnums(providerEnums)
 
         expect:
-            ObjectSchemaValidator.validate(consumerSchema, providerSchema) == errors
+            validator.validate(consumerSchema, providerSchema) == errors
 
         where:
             consumerEnums                               | providerEnums                                | errors
@@ -82,7 +86,7 @@ class ObjectSchemaValidatorSpec extends Specification {
             providerSchema.setProperties(['a': getSchemaWithExtended('ab'), 'c': getSchemaWithExtended('cd')])
 
         expect:
-            ObjectSchemaValidator.validate(consumerSchema, providerSchema).size() == 0
+            validator.validate(consumerSchema, providerSchema).size() == 0
     }
 
     def 'Should return error when ObjectSchema of consumer contains superset of provider properties'() {
@@ -96,7 +100,7 @@ class ObjectSchemaValidatorSpec extends Specification {
             providerSchema.setProperties(['a': getSchemaWithExtended('ab')])
 
         expect:
-            ObjectSchemaValidator.validate(consumerSchema, providerSchema) == ['Schema with id a has not matching properties - consumer: ids of properties: [a, c], provider: ids of properties: [a]']
+            validator.validate(consumerSchema, providerSchema) == ['Schema with id a has not matching properties - consumer: ids of properties: [a, c], provider: ids of properties: [a]']
     }
 
     def getSampleSchema() {

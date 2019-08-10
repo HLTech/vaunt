@@ -5,12 +5,15 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
-public class JsonSchemaValidator {
+public abstract class JsonSchemaValidator {
     static final String ERROR_FORMAT = "Schema with id %s has not matching %s - consumer: %s, provider: %s";
     static final String ERROR_FORMAT_SHORT = "Schema with id %s has not matching %s";
 
-    public static List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
+    public abstract Class<?> supportsSchemaType();
+
+    public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
         List<String> errors = new ArrayList<>();
 
         if (!equals(consumerSchema.get$ref(), providerSchema.get$ref())) {
@@ -72,19 +75,15 @@ public class JsonSchemaValidator {
         return errors;
     }
 
-    private static boolean isRequired(JsonSchema schema) {
+    private boolean isRequired(JsonSchema schema) {
         return schema.getRequired() != null && schema.getRequired();
     }
 
-    public static boolean equals(Object object1, Object object2) {
-        if (object1 == null) {
-            return object2 == null;
-        } else {
-            return object1.equals(object2);
-        }
+    boolean equals(Object object1, Object object2) {
+        return Objects.equals(object1, object2);
     }
 
-    private static <T> boolean arraysEquals(T[] array1, T[] array2) {
+    private <T> boolean arraysEquals(T[] array1, T[] array2) {
         if (array1 == null) {
             return array2 == null;
         }
@@ -95,7 +94,7 @@ public class JsonSchemaValidator {
         return Arrays.equals(array1, array2);
     }
 
-    private static String jsonArrayToString(JsonSchema[] array) {
+    private String jsonArrayToString(JsonSchema[] array) {
         if (array == null) {
             return "null";
         }
@@ -116,7 +115,7 @@ public class JsonSchemaValidator {
         }
     }
 
-    private static String jsonToString(JsonSchema object) {
+    String jsonToString(JsonSchema object) {
         return "JsonSchema(id=" + object.getId() + ")";
     }
 }
