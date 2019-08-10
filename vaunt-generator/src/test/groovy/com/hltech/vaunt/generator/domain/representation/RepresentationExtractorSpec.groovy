@@ -35,8 +35,8 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts.size() == 1
             service.capabilities.contracts[0].destinationName == 'destination'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body.getId() == expectedBody.getId()
-            service.capabilities.contracts[0].body == expectedBody
+            service.capabilities.contracts[0].message.getId() == expectedBody.getId()
+            service.capabilities.contracts[0].message == expectedBody
     }
 
     def 'Should extract service representation for provider messages with single annotation and using properties'() {
@@ -60,8 +60,8 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts.size() == 1
             service.capabilities.contracts[0].destinationName == 'epicQueue'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body.getId() == expectedBody.getId()
-            service.capabilities.contracts[0].body == expectedBody
+            service.capabilities.contracts[0].message.getId() == expectedBody.getId()
+            service.capabilities.contracts[0].message == expectedBody
     }
 
     def 'Should extract service representation for consumer messages with single annotation'() {
@@ -86,8 +86,8 @@ class RepresentationExtractorSpec extends Specification {
             def expectedBody = serializer.generateSchema(com.hltech.vaunt.generator.domain.representation.message.monoannotated.SampleConsumerMessage)
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'destination'
-            providerContract.body.getId() == expectedBody.getId()
-            providerContract.body == expectedBody
+            providerContract.message.getId() == expectedBody.getId()
+            providerContract.message == expectedBody
     }
 
     def 'Should extract service representation for consumer messages with single annotation and using properties'() {
@@ -114,8 +114,8 @@ class RepresentationExtractorSpec extends Specification {
             def expectedBody = serializer.generateSchema(com.hltech.vaunt.generator.domain.representation.message.monoannotated.SampleConsumerMessage)
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'epicQueue'
-            providerContract.body.getId() == expectedBody.getId()
-            providerContract.body == expectedBody
+            providerContract.message.getId() == expectedBody.getId()
+            providerContract.message == expectedBody
     }
 
     def 'Should extract service representation for provider messages with multiple annotations'() {
@@ -137,11 +137,11 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts.size() == 2
             service.capabilities.contracts[0].destinationName == 'destination'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body == serializer.generateSchema(SampleProviderMessage)
+            service.capabilities.contracts[0].message == serializer.generateSchema(SampleProviderMessage)
             service.capabilities.contracts[1].destinationName == 'destination2'
             service.capabilities.contracts[1].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[1].body.getId() == expectedBody.getId()
-            service.capabilities.contracts[1].body == expectedBody
+            service.capabilities.contracts[1].message.getId() == expectedBody.getId()
+            service.capabilities.contracts[1].message == expectedBody
     }
 
     def 'Should extract service representation for consumer messages with multiple annotations'() {
@@ -167,14 +167,14 @@ class RepresentationExtractorSpec extends Specification {
             def providerContract = service.expectations.providerNameToContracts.get('provider')[0]
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'destination'
-            providerContract.body.getId() == expectedBody.getId()
-            providerContract.body == expectedBody
+            providerContract.message.getId() == expectedBody.getId()
+            providerContract.message == expectedBody
 
             def providerContract2 = service.expectations.providerNameToContracts.get('provider')[1]
             providerContract2.destinationType == DestinationType.QUEUE
             providerContract2.destinationName == 'destination2'
-            providerContract2.body.getId() == expectedBody.getId()
-            providerContract2.body == expectedBody
+            providerContract2.message.getId() == expectedBody.getId()
+            providerContract2.message == expectedBody
     }
 
     def 'Should extract service representation for provider messages with single annotation with given message id'() {
@@ -196,8 +196,8 @@ class RepresentationExtractorSpec extends Specification {
             service.capabilities.contracts.size() == 1
             service.capabilities.contracts[0].destinationName == 'destination'
             service.capabilities.contracts[0].destinationType == DestinationType.QUEUE
-            service.capabilities.contracts[0].body.getId() == 'testId'
-            service.capabilities.contracts[0].body == expectedBody
+            service.capabilities.contracts[0].message.getId() == 'testId'
+            service.capabilities.contracts[0].message == expectedBody
     }
 
     def 'Should extract service representation for consumer messages with single annotation with given message id'() {
@@ -222,7 +222,7 @@ class RepresentationExtractorSpec extends Specification {
             def providerContract = service.expectations.providerNameToContracts.get('provider')[0]
             providerContract.destinationType == DestinationType.QUEUE
             providerContract.destinationName == 'destination'
-            providerContract.body.getId() == 'randomId'
-            providerContract.body == expectedBody
+            providerContract.message.getId() == 'randomId'
+            providerContract.message == expectedBody
     }
 }

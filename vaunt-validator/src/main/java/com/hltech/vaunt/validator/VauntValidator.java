@@ -1,6 +1,7 @@
 package com.hltech.vaunt.validator;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.google.common.collect.Lists;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
@@ -9,6 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class VauntValidator {
+    private static final String MISSING_ENDPOINT = "Missing endpoint required by consumer";
+    private static final String MISSING_MESSAGE_WITH_ID = "Missing message with given id required by consumer";
+    private static final String DUPLICATE_MATCH = "More than one message with the same id for given endpoint";
 
     public List<ValidationResult> validate(Service consumer, Service provider) {
         return consumer.getExpectations().getProviderNameToContracts().get(provider.getName()).stream()
@@ -30,24 +34,32 @@ public class VauntValidator {
                 .collect(Collectors.toList());
 
         if (endpointMatchingContracts.isEmpty()) {
-            return ValidationResult.failure(consumerContract, ValidationError.MISSING_ENDPOINT);
+            return ValidationResult.failure(
+                    consumerContract.toString(), Lists.newArrayList(MISSING_ENDPOINT));
         }
 
         List<Contract> idMatchingContracts = endpointMatchingContracts.stream()
-                .filter(providerContract -> isIdMatching(consumerContract.getBody(), providerContract.getBody()))
+                .filter(providerContract -> isIdMatching(consumerContract.getMessage(), providerContract.getMessage()))
                 .collect(Collectors.toList());
 
         if (idMatchingContracts.isEmpty()) {
-            return ValidationResult.failure(consumerContract, ValidationError.MISSING_MESSAGE_WITH_NAME);
+            return ValidationResult.failure(
+                    consumerContract.toString(),
+                    Lists.newArrayList(MISSING_MESSAGE_WITH_ID));
         }
 
         if (idMatchingContracts.size() > 1) {
-            return ValidationResult.failure(consumerContract, ValidationError.DUPLICATE_MATCH);
+            return ValidationResult.failure(
+                    consumerContract.toString(),
+                    Lists.newArrayList(DUPLICATE_MATCH));
         }
 
-        return isContentMatching(consumerContract.getBody(),
-                idMatchingContracts.get(0).getBody()) ? ValidationResult.success(consumerContract)
-                : ValidationResult.failure(consumerContract, idMatchingContracts.get(0), ValidationError.WRONG_SCHEMA);
+        List<String> validationErrors =
+                validateSchema(consumerContract.getMessage(), idMatchingContracts.get(0).getMessage());
+
+        return validationErrors.size() == 0
+                ? ValidationResult.success(consumerContract.toString())
+                : ValidationResult.failure(consumerContract.toString(), validationErrors);
     }
 
     private boolean isEndpointMatching(Contract firstContract, Contract secondContract) {
@@ -73,7 +85,7 @@ public class VauntValidator {
         return consumerBody.getId().equals(providerBody.getId());
     }
 
-    private boolean isContentMatching(JsonSchema consumerBody, JsonSchema providerBody) {
-        return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
+    private List<String> validateSchema(JsonSchema consumerBody, JsonSchema providerBody) {
+        return VauntSchemaValidator.validate(consumerBody, providerBody);
     }
 }

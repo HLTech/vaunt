@@ -51,7 +51,7 @@ class VauntSerializerSpec extends Specification {
                         {
                             "destinationType":"${dstType}",
                             "destinationName":"${dstName}",
-                            "body": {
+                            "message": {
                                 "type":"string"
                             }
                         }
@@ -120,7 +120,7 @@ class VauntSerializerSpec extends Specification {
         schema.setId(Contract.class.getSimpleName())
         schema.putOptionalProperty("destinationType", destinationTypePart())
         schema.putOptionalProperty("destinationName", new StringSchema())
-        schema.putOptionalProperty("body", bodyPart())
+        schema.putOptionalProperty("message", bodyPart())
         return schema
     }
 
@@ -185,7 +185,7 @@ class VauntSerializerSpec extends Specification {
                                 "destinationName":{
                                     "type":"string"
                                 },
-                                "body":{
+                                "message":{
                                     "type":"object",
                                     "id":"JsonSchema",
                                     "properties":{

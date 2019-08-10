@@ -61,30 +61,30 @@ class RepresentationWriterSpec extends Specification {
             expect content, hasJsonPath('$.capabilities.contracts', hasSize(2))
             expect content, hasJsonPath('$.capabilities.contracts[0].destinationType', equalTo('QUEUE'))
             expect content, hasJsonPath('$.capabilities.contracts[0].destinationName', equalTo('request_for_information_queue'))
-            expect content, hasJsonPath('$.capabilities.contracts[0].body.type', equalTo('object'))
-            expect content, hasJsonPath('$.capabilities.contracts[0].body.properties.name.type', equalTo('string'))
+            expect content, hasJsonPath('$.capabilities.contracts[0].message.type', equalTo('object'))
+            expect content, hasJsonPath('$.capabilities.contracts[0].message.properties.name.type', equalTo('string'))
             expect content, hasJsonPath('$.capabilities.contracts[1].destinationType', equalTo('TOPIC'))
             expect content, hasJsonPath('$.capabilities.contracts[1].destinationName', equalTo('something_changed_topic'))
-            expect content, hasJsonPath('$.capabilities.contracts[1].body.type', equalTo('object'))
-            expect content, hasJsonPath('$.capabilities.contracts[1].body.properties.timestamp.type', equalTo('integer'))
+            expect content, hasJsonPath('$.capabilities.contracts[1].message.type', equalTo('object'))
+            expect content, hasJsonPath('$.capabilities.contracts[1].message.properties.timestamp.type', equalTo('integer'))
 
         and:
             expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client', hasSize(2))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].destinationType', equalTo('QUEUE'))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].destinationName', equalTo('reject_information_queue'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].body.type', equalTo('object'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].body.properties.reason.type', equalTo('string'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].body.properties.code.type', equalTo('integer'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].message.type', equalTo('object'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].message.properties.reason.type', equalTo('string'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[0].message.properties.code.type', equalTo('integer'))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[1].destinationType', equalTo('QUEUE'))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[1].destinationName', equalTo('accept_information_queue'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[1].body.properties.id.type', equalTo('integer'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.remote-client[1].message.properties.id.type', equalTo('integer'))
 
         and:
             expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service', hasSize(1))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].destinationType', equalTo('QUEUE'))
             expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].destinationName', equalTo('audit_queue'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].body.type', equalTo('object'))
-            expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].body.properties.payload.type', equalTo('string'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].message.type', equalTo('object'))
+            expect content, hasJsonPath('$.expectations.providerNameToContracts.audit-service[0].message.properties.payload.type', equalTo('string'))
 
 
     }

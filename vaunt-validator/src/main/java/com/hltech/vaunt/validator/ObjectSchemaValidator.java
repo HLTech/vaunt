@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
     private static final String UNMATCHING_SCHEMA_TYPE =
-            "Consumer schema with id %s and type %s does not match provider schema with id %s and name %s";
+            "Consumer schema with id %s and type %s does not match provider schema with id %s and type %s";
 
     @Override
     public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
@@ -68,11 +68,11 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
         }
 
         return consumerProperties.keySet().stream()
-                .flatMap(key -> vslidateProperty(consumerProperties.get(key), providerProperties.get(key)).stream())
+                .flatMap(key -> validateProperty(consumerProperties.get(key), providerProperties.get(key)).stream())
                 .collect(Collectors.toList());
     }
 
-    private List<String> vslidateProperty(JsonSchema consumerProperty, JsonSchema providerProperty) {
+    private List<String> validateProperty(JsonSchema consumerProperty, JsonSchema providerProperty) {
         return consumerProperty.getClass() == providerProperty.getClass()
                 ? VauntSchemaValidator.validate(consumerProperty, providerProperty)
                 : Lists.newArrayList(String.format(

@@ -1,36 +1,32 @@
 package com.hltech.vaunt.validator;
 
-import com.hltech.vaunt.core.domain.model.Contract;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@Data
+import static com.hltech.vaunt.validator.ValidationResult.ValidationStatus.FAILED;
+import static com.hltech.vaunt.validator.ValidationResult.ValidationStatus.OK;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidationResult {
-    private final boolean isValid;
-    private final String description;
-    private final List<ValidationError> errors;
+    private final String name;
+    private final ValidationStatus result;
+    private final List<String> errors;
 
-    static ValidationResult success(Contract expectation) {
-        return new ValidationResult(
-                true,
-                String.format("Matching contract: %s %s, %s",
-                        expectation.getDestinationType(),
-                        expectation.getDestinationName(),
-                        expectation.getBody().getId()),
-                new ArrayList<>());
+    public static ValidationResult success(String name) {
+        return new ValidationResult(name, OK, new ArrayList<>());
     }
 
-    static ValidationResult failure(Contract expectation, ValidationError... errors) {
-        return new ValidationResult(false, String.format("Expectation: %s", expectation), Arrays.asList(errors));
+    public static ValidationResult failure(String name, List<String> errors) {
+        return new ValidationResult(name, FAILED, errors);
     }
 
-    static ValidationResult failure(Contract expectation, Contract capability, ValidationError... errors) {
-        return new ValidationResult(
-                false,
-                String.format("Expectation: %s, Capability: %s", expectation, capability),
-                Arrays.asList(errors));
+    public enum ValidationStatus {
+        OK,
+        FAILED
     }
 }
