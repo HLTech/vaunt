@@ -145,7 +145,8 @@ allprojects {
 
     sourceSets {
         test.groovy.srcDirs(
-                "src/test/groovy"
+                "src/test/unit",
+                "src/test/functional",
         )
     }
 }
