@@ -74,7 +74,7 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
 
     private List<String> validateProperty(JsonSchema consumerProperty, JsonSchema providerProperty) {
         return consumerProperty.getClass() == providerProperty.getClass()
-                ? VauntSchemaValidator.validate(consumerProperty, providerProperty)
+                ? SchemaValidator.validate(consumerProperty, providerProperty)
                 : Lists.newArrayList(String.format(
                         UNMATCHING_SCHEMA_TYPE,
                         consumerProperty.getId(),

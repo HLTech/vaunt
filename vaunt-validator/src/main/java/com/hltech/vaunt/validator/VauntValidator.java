@@ -86,6 +86,6 @@ public class VauntValidator {
     }
 
     private List<String> validateSchema(JsonSchema consumerBody, JsonSchema providerBody) {
-        return VauntSchemaValidator.validate(consumerBody, providerBody);
+        return SchemaValidator.validate(consumerBody, providerBody);
     }
 }
