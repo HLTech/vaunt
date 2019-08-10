@@ -75,13 +75,11 @@ public class VauntValidator {
 
     private boolean isContentMatching(JsonSchema consumerBody, JsonSchema providerBody) {
         if (isStringSchema(consumerBody) && isStringSchema(providerBody)) {
-            return StringSchemaValidator.validate(
-                    consumerBody.asStringSchema(), providerBody.asStringSchema()).size() == 0;
+            return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
         }
 
         if (isObjectSchema(consumerBody) && isObjectSchema(providerBody)) {
-            return ObjectSchemaValidator.validate(
-                    consumerBody.asObjectSchema(), providerBody.asObjectSchema()).size() == 0;
+            return VauntSchemaValidator.validate(consumerBody, providerBody).size() == 0;
         }
 
         return consumerBody.equals(providerBody);

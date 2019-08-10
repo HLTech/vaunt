@@ -6,9 +6,13 @@ import com.fasterxml.jackson.module.jsonSchema.types.LinkDescriptionObject
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Sets
 import spock.lang.Specification
+import spock.lang.Subject
 import spock.lang.Unroll
 
 class StringSchemaValidatorSpec extends Specification {
+
+    @Subject
+    def validator = new StringSchemaValidator()
 
     def 'Should return no errors for the same StringSchemas'() {
         given:
@@ -16,13 +20,13 @@ class StringSchemaValidatorSpec extends Specification {
             StringSchema providerSchema = getSampleSchema()
 
         expect:
-            StringSchemaValidator.validate(consumerSchema, providerSchema).size() == 0
+            validator.validate(consumerSchema, providerSchema).size() == 0
     }
 
     @Unroll
     def 'Should return error for consumer StringSchema being different in #field from producer StringSchema'() {
         when:
-            def resultList = StringSchemaValidator.validate(consumerSchema, providerSchema)
+            def resultList = validator.validate(consumerSchema, providerSchema)
 
         then:
             resultList.size() == 1
@@ -60,7 +64,7 @@ class StringSchemaValidatorSpec extends Specification {
             providerSchema.setEnums(providerEnums)
 
         expect:
-            StringSchemaValidator.validate(consumerSchema, providerSchema) == errors
+            validator.validate(consumerSchema, providerSchema) == errors
 
         where:
             consumerEnums                               | providerEnums                                | errors
