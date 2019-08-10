@@ -1,10 +1,11 @@
-package com.hltech.vaunt.validator
+package com.hltech.vaunt.validator.schema
 
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.types.LinkDescriptionObject
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Sets
+import com.hltech.vaunt.validator.schema.StringSchemaValidator
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll

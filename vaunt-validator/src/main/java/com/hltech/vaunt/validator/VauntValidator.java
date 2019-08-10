@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
+import com.hltech.vaunt.validator.schema.SchemaValidator;
 
 import java.util.List;
 import java.util.stream.Collectors;
