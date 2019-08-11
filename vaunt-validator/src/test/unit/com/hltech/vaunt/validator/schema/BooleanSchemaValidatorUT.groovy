@@ -9,7 +9,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class BooleanSchemaValidatorSpec extends Specification {
+class BooleanSchemaValidatorUT extends Specification {
 
     @Subject
     def validator = new BooleanSchemaValidator()

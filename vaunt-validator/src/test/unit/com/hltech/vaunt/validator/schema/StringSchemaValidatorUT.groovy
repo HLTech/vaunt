@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class StringSchemaValidatorSpec extends Specification {
+class StringSchemaValidatorUT extends Specification {
 
     @Subject
     def validator = new StringSchemaValidator()

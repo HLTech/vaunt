@@ -9,7 +9,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class IntegerSchemaValidatorSpec extends Specification {
+class IntegerSchemaValidatorUT extends Specification {
 
     @Subject
     def validator = new IntegerSchemaValidator()
