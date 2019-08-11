@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class VauntValidator {
     private static final String MISSING_ENDPOINT = "Missing endpoint required by consumer";
     private static final String MISSING_MESSAGE_WITH_ID = "Missing message with given id required by consumer";
-    private static final String DUPLICATE_MATCH = "More than one message with the same id for given endpoint";
+    private static final String MULTIPLE_MATCH = "More than one message with the same id for given endpoint";
 
     public List<ValidationResult> validate(Service consumer, Service provider) {
         return consumer.getExpectations().getProviderNameToContracts().get(provider.getName()).stream()
@@ -52,7 +52,7 @@ public class VauntValidator {
         if (idMatchingContracts.size() > 1) {
             return ValidationResult.failure(
                     consumerContract.toString(),
-                    Lists.newArrayList(DUPLICATE_MATCH));
+                    Lists.newArrayList(MULTIPLE_MATCH));
         }
 
         List<String> validationErrors =
