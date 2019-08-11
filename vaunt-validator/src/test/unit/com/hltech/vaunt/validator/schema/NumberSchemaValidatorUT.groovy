@@ -76,6 +76,18 @@ class NumberSchemaValidatorUT extends Specification {
             new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')        | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
     }
 
+    def 'Should pass validation when provider schema is required and consumer is not'() {
+        given:
+            def consumerSchema = new NumberSchema()
+            consumerSchema.setRequired(false)
+
+            def providerSchema = new NumberSchema()
+            providerSchema.setRequired(true)
+
+        expect:
+            validator.validate(consumerSchema, providerSchema) == []
+    }
+
     def getSampleSchema() {
         def schema = new NumberSchema(
                 exclusiveMaximum: 4,
