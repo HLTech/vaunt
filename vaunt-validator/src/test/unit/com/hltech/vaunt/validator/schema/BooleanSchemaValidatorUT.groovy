@@ -71,6 +71,18 @@ class BooleanSchemaValidatorUT extends Specification {
             new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')        | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
     }
 
+    def 'Should pass validation when provider schema is required and consumer is not'() {
+        given:
+            def consumerSchema = new BooleanSchema()
+            consumerSchema.setRequired(false)
+
+            def providerSchema = new BooleanSchema()
+            providerSchema.setRequired(true)
+
+        expect:
+            validator.validate(consumerSchema, providerSchema) == []
+    }
+
     def getSampleSchema() {
         def schema = new BooleanSchema(
                 enums: ['a', 'b'],

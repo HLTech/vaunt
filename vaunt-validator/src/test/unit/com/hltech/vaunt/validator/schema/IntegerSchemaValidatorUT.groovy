@@ -77,6 +77,18 @@ class IntegerSchemaValidatorUT extends Specification {
             new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')        | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
     }
 
+    def 'Should pass validation when provider schema is required and consumer is not'() {
+        given:
+            def consumerSchema = new IntegerSchema()
+            consumerSchema.setRequired(false)
+
+            def providerSchema = new IntegerSchema()
+            providerSchema.setRequired(true)
+
+        expect:
+            validator.validate(consumerSchema, providerSchema) == []
+    }
+
     def getSampleSchema() {
         def schema = new IntegerSchema(
                 divisibleBy: 1,

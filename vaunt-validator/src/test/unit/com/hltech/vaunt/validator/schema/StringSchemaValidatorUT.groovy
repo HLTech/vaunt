@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.types.LinkDescriptionObject
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Sets
-import com.hltech.vaunt.validator.schema.StringSchemaValidator
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -73,6 +72,18 @@ class StringSchemaValidatorUT extends Specification {
             Sets.newHashSet('abc', 'def', 'geh', 'ijk') | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
             Sets.newHashSet('abc', 'def', 'geh')        | new HashSet<String>()                        | []
             new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
+    }
+
+    def 'Should pass validation when provider schema is required and consumer is not'() {
+        given:
+            def consumerSchema = new StringSchema()
+            consumerSchema.setRequired(false)
+
+            def providerSchema = new StringSchema()
+            providerSchema.setRequired(true)
+
+        expect:
+            validator.validate(consumerSchema, providerSchema) == []
     }
 
     def getSampleSchema() {

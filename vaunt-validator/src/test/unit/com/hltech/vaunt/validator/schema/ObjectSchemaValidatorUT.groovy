@@ -104,6 +104,18 @@ class ObjectSchemaValidatorUT extends Specification {
             validator.validate(consumerSchema, providerSchema) == ['Schema with id a has not matching properties - consumer: ids of properties: [a, c], provider: ids of properties: [a]']
     }
 
+    def 'Should pass validation when provider schema is required and consumer is not'() {
+        given:
+            def consumerSchema = new ObjectSchema()
+            consumerSchema.setRequired(false)
+
+            def providerSchema = new ObjectSchema()
+            providerSchema.setRequired(true)
+
+        expect:
+            validator.validate(consumerSchema, providerSchema) == []
+    }
+
     def getSampleSchema() {
         def schema = new ObjectSchema(
                 additionalProperties: getAdditionalProperty('id'),
