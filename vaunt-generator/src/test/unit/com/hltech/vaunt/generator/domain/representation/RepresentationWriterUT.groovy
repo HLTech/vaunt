@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.hasSize
 import static spock.util.matcher.HamcrestSupport.expect
 
-class RepresentationWriterSpec extends Specification {
+class RepresentationWriterUT extends Specification {
 
     @Shared
     def serializer = new VauntSerializer()

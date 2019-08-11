@@ -8,7 +8,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
-class RepresentationExtractorSpec extends Specification {
+class RepresentationExtractorUT extends Specification {
 
     @Shared
     def serializer = new VauntSerializer()
