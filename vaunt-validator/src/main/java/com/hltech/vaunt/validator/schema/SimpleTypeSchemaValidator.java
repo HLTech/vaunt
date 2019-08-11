@@ -24,7 +24,10 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
                     providerSimpleTypeSchema.getDefault()));
         }
 
-        if (!linkDescriptionArraysEquals(consumerSimpleTypeSchema.getLinks(), providerSimpleTypeSchema.getLinks())) {
+        if (!arraysEquals(consumerSimpleTypeSchema.getLinks(),
+                providerSimpleTypeSchema.getLinks(),
+                SimpleTypeSchemaValidator::equalsLinkDescriptionObject)) {
+
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerSchema.getId(),
                     "links"));
@@ -47,28 +50,6 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
         }
 
         return errors;
-    }
-
-    private static boolean linkDescriptionArraysEquals(LinkDescriptionObject[] array1, LinkDescriptionObject[] array2) {
-        if (array1 == null) {
-            return array2 == null;
-        }
-        if (array2 == null) {
-            return false;
-        }
-        int len = array1.length;
-        if (len != array2.length) {
-            return false;
-        }
-        for (int i = 0; i < len; ++i) {
-            LinkDescriptionObject ob1 = array1[i];
-            LinkDescriptionObject ob2 = array2[i];
-
-            if (!equalsLinkDescriptionObject(ob1, ob2)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean equalsLinkDescriptionObject(LinkDescriptionObject ob1, LinkDescriptionObject ob2) {

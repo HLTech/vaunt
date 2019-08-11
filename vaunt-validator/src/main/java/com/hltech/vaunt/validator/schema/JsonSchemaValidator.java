@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public abstract class JsonSchemaValidator {
     static final String ERROR_FORMAT = "Schema with id %s has not matching %s - consumer: %s, provider: %s";
@@ -32,7 +34,7 @@ public abstract class JsonSchemaValidator {
                     providerSchema.get$schema()));
         }
 
-        if (!arraysEquals(consumerSchema.getDisallow(), providerSchema.getDisallow())) {
+        if (!arraysEquals(consumerSchema.getDisallow(), providerSchema.getDisallow(), Object::equals)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "disallow",
@@ -40,7 +42,7 @@ public abstract class JsonSchemaValidator {
                     jsonArrayToString(providerSchema.getDisallow())));
         }
 
-        if (!arraysEquals(consumerSchema.getExtends(), providerSchema.getExtends())) {
+        if (!arraysEquals(consumerSchema.getExtends(), providerSchema.getExtends(), Object::equals)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "extends",
@@ -83,36 +85,31 @@ public abstract class JsonSchemaValidator {
         return Objects.equals(object1, object2);
     }
 
-    private <T> boolean arraysEquals(T[] array1, T[] array2) {
+    <T> boolean arraysEquals(T[] array1, T[] array2, BiPredicate<T, T> checker) {
         if (array1 == null) {
             return array2 == null;
         }
         if (array2 == null) {
             return false;
         }
-
-        return Arrays.equals(array1, array2);
+        int len = array1.length;
+        if (len != array2.length) {
+            return false;
+        }
+        for (int i = 0; i < len; ++i) {
+            if (!checker.test(array1[i], array2[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String jsonArrayToString(JsonSchema[] array) {
-        if (array == null) {
-            return "null";
-        }
+        String content = Arrays.stream(array)
+                .map(this::jsonToString)
+                .collect(Collectors.joining(", "));
 
-        int inMax = array.length - 1;
-        if (inMax == -1) {
-            return "[]";
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('[');
-        for (int i = 0; ; i++) {
-            stringBuilder.append(jsonToString(array[i]));
-            if (i == inMax) {
-                return stringBuilder.append(']').toString();
-            }
-            stringBuilder.append(", ");
-        }
+        return "[" + content + "]";
     }
 
     String jsonToString(JsonSchema object) {
