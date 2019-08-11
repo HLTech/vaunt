@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -114,5 +115,25 @@ public abstract class JsonSchemaValidator {
 
     String jsonToString(JsonSchema object) {
         return "JsonSchema(id=" + object.getId() + ")";
+    }
+
+    boolean isEnumValid(Set<String> consumerEnums, Set<String> providerEnums) {
+        if (representsString(consumerEnums) && representsEnum(providerEnums)) {
+            return false;
+        }
+
+        if (representsEnum(consumerEnums) && representsEnum(providerEnums)) {
+            return providerEnums.containsAll(consumerEnums);
+        }
+
+        return true;
+    }
+
+    private boolean representsEnum(Set<String> enums) {
+        return enums.size() > 0;
+    }
+
+    private boolean representsString(Set<String> enums) {
+        return enums.size() == 0;
     }
 }
