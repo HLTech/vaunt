@@ -24,7 +24,7 @@ import static com.hltech.vaunt.core.domain.model.DestinationType.TOPIC
 import static com.hltech.vaunt.validator.ValidationResult.ValidationStatus.OK
 import static com.hltech.vaunt.validator.ValidationResult.ValidationStatus.FAILED
 
-class VauntValidatorSpec extends Specification {
+class VauntValidatorFT extends Specification {
 
     @Subject
     VauntValidator validator = new VauntValidator()

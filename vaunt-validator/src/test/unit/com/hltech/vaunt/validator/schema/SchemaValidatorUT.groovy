@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import spock.lang.Specification
 import spock.lang.Subject
 
-class SchemaValidatorSpec extends Specification {
+class SchemaValidatorUT extends Specification {
 
     @Subject
     def validator = new SchemaValidator()
