@@ -14,7 +14,7 @@ public abstract class ValueTypeSchemaValidator extends SimpleTypeSchemaValidator
         ValueTypeSchema consumerValueTypeSchema = consumerSchema.asValueTypeSchema();
         ValueTypeSchema providerValueTypeSchema = providerSchema.asValueTypeSchema();
 
-        if (!isValidEnum(consumerValueTypeSchema, providerValueTypeSchema)) {
+        if (!isEnumValid(consumerValueTypeSchema.getEnums(), providerValueTypeSchema.getEnums())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "enums",
@@ -31,25 +31,5 @@ public abstract class ValueTypeSchemaValidator extends SimpleTypeSchemaValidator
         }
 
         return errors;
-    }
-
-    private boolean isValidEnum(ValueTypeSchema consumerBody, ValueTypeSchema providerBody) {
-        if (representsString(consumerBody) && representsEnum(providerBody)) {
-            return false;
-        }
-
-        if (representsEnum(consumerBody) && representsEnum(providerBody)) {
-            return providerBody.getEnums().containsAll(consumerBody.getEnums());
-        }
-
-        return true;
-    }
-
-    private boolean representsEnum(ValueTypeSchema body) {
-        return body.getEnums().size() > 0;
-    }
-
-    private boolean representsString(ValueTypeSchema body) {
-        return body.getEnums().size() == 0;
     }
 }

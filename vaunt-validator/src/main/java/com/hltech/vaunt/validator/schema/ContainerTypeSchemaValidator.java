@@ -14,7 +14,7 @@ public abstract class ContainerTypeSchemaValidator extends SimpleTypeSchemaValid
         ContainerTypeSchema consumerContainerTypeSchema = consumerSchema.asContainerTypeSchema();
         ContainerTypeSchema providerContainerTypeSchema = providerSchema.asContainerTypeSchema();
 
-        if (!isValidEnum(consumerContainerTypeSchema, providerContainerTypeSchema)) {
+        if (!isEnumValid(consumerContainerTypeSchema.getEnums(), providerContainerTypeSchema.getEnums())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "enums",
@@ -31,25 +31,5 @@ public abstract class ContainerTypeSchemaValidator extends SimpleTypeSchemaValid
         }
 
         return errors;
-    }
-
-    private static boolean isValidEnum(ContainerTypeSchema consumerBody, ContainerTypeSchema providerBody) {
-        if (representsString(consumerBody) && representsEnum(providerBody)) {
-            return false;
-        }
-
-        if (representsEnum(consumerBody) && representsEnum(providerBody)) {
-            return providerBody.getEnums().containsAll(consumerBody.getEnums());
-        }
-
-        return true;
-    }
-
-    private static boolean representsEnum(ContainerTypeSchema body) {
-        return body.getEnums().size() > 0;
-    }
-
-    private static boolean representsString(ContainerTypeSchema body) {
-        return body.getEnums().size() == 0;
     }
 }
