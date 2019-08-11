@@ -5,7 +5,6 @@ import com.fasterxml.jackson.module.jsonSchema.types.LinkDescriptionObject
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
 import com.google.common.collect.Sets
-import com.hltech.vaunt.validator.schema.ObjectSchemaValidator
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll

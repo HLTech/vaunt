@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
 import com.google.common.collect.Lists;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -84,26 +83,11 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
     }
 
     private String mapToString(Map<String, JsonSchema> props) {
-        if (props.isEmpty()) {
-            return "{}";
-        }
+        String content = props.entrySet()
+                .stream()
+                .map(e -> e.getKey() + '=' + jsonToString(e.getValue()))
+                .collect(Collectors.joining(", "));
 
-        int max = props.size() - 1;
-
-        StringBuilder sb = new StringBuilder();
-        Iterator<Map.Entry<String, JsonSchema>> it = props.entrySet().iterator();
-
-        sb.append('{');
-        for (int i = 0; ; i++) {
-            Map.Entry<String, JsonSchema> entry = it.next();
-            sb.append(entry.getKey());
-            sb.append('=');
-            sb.append(jsonToString(entry.getValue()));
-
-            if (i == max) {
-                return sb.append('}').toString();
-            }
-            sb.append(", ");
-        }
+        return "{" + content + "}";
     }
 }
