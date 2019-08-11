@@ -6,7 +6,7 @@ import com.hltech.vaunt.generator.domain.representation.RepresentationWriter
 import spock.lang.Specification
 import spock.lang.Subject
 
-class VauntGeneratorSpec extends Specification {
+class VauntGeneratorUT extends Specification {
 
     def extractorMock = Mock(RepresentationExtractor)
     def writerMock = Mock(RepresentationWriter)
