@@ -13,6 +13,7 @@ import com.fasterxml.jackson.module.jsonSchema.customProperties.ValidationSchema
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext;
 import com.hltech.vaunt.core.domain.model.Contract;
+import com.hltech.vaunt.core.domain.model.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,12 +40,21 @@ public class VauntSerializer {
         return generator.generateSchema(type);
     }
 
-    public String serializeSchema(JsonSchema schema) {
+    public String serialize(Object object) {
         try {
-            return mapper.writeValueAsString(schema);
+            return mapper.writeValueAsString(object);
         } catch (JsonProcessingException ex) {
-            ex.printStackTrace();
-            throw new VauntSerializationException("Error during schema serialization", ex);
+            throw new VauntSerializationException("Error during serialization of class: "
+                    + object.getClass().getName(), ex);
+        }
+    }
+
+    public Service readServiceDefinition(File file) {
+        try {
+            return mapper.readValue(file, Service.class);
+        } catch (IOException ex) {
+            throw new VauntSerializationException("Error during reading service definition from file: "
+                    + file.getAbsolutePath(), ex);
         }
     }
 
