@@ -1,7 +1,6 @@
 package com.hltech.vaunt.validator;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.google.common.collect.Lists;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.DestinationType;
 import com.hltech.vaunt.core.domain.model.Service;
@@ -36,7 +35,7 @@ public class VauntValidator {
 
         if (endpointMatchingContracts.isEmpty()) {
             return ValidationResult.failure(
-                    consumerContract.toString(), Lists.newArrayList(MISSING_ENDPOINT));
+                    consumerContract.toString(), MISSING_ENDPOINT);
         }
 
         List<Contract> idMatchingContracts = endpointMatchingContracts.stream()
@@ -46,13 +45,13 @@ public class VauntValidator {
         if (idMatchingContracts.isEmpty()) {
             return ValidationResult.failure(
                     consumerContract.toString(),
-                    Lists.newArrayList(MISSING_MESSAGE_WITH_ID));
+                    MISSING_MESSAGE_WITH_ID);
         }
 
         if (idMatchingContracts.size() > 1) {
             return ValidationResult.failure(
                     consumerContract.toString(),
-                    Lists.newArrayList(MULTIPLE_MATCH));
+                    MULTIPLE_MATCH);
         }
 
         List<String> validationErrors =

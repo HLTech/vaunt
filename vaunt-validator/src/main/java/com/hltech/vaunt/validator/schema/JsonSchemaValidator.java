@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class JsonSchemaValidator {
     static final String ERROR_FORMAT = "Schema with id %s has not matching %s - consumer: %s, provider: %s";
@@ -93,16 +94,9 @@ public abstract class JsonSchemaValidator {
         if (array2 == null) {
             return false;
         }
-        int len = array1.length;
-        if (len != array2.length) {
-            return false;
-        }
-        for (int i = 0; i < len; ++i) {
-            if (!checker.test(array1[i], array2[i])) {
-                return false;
-            }
-        }
-        return true;
+
+        return array1.length == array2.length && IntStream.range(0, array1.length)
+                .allMatch(i -> checker.test(array1[i], array2[i]));
     }
 
     private String jsonArrayToString(JsonSchema[] array) {
