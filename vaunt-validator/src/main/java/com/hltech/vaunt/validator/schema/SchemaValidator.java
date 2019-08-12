@@ -2,6 +2,7 @@ package com.hltech.vaunt.validator.schema;
 
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.google.common.collect.Sets;
+import com.hltech.vaunt.validator.VauntValidationException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +27,7 @@ public class SchemaValidator {
                 .filter(v -> v.supportsSchemaType().equals(consumerSchema.getClass()))
                 .filter(v -> v.supportsSchemaType().equals(providerSchema.getClass()))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new VauntValidationException(
                         "Exactly one validator should exist for consumer and provider"));
 
         return matchingValidator.validate(consumerSchema, providerSchema);
