@@ -1,6 +1,5 @@
 package com.hltech.vaunt.generator;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.hltech.vaunt.core.VauntSerializer;
 import com.hltech.vaunt.core.domain.model.Service;
 import com.hltech.vaunt.generator.domain.representation.RepresentationExtractor;
@@ -31,18 +30,11 @@ public class VauntGenerator {
             writer.writeServiceRepresentation(
                     serviceRepresentation(packageRoot, serviceName, props), targetDirectory);
         } catch (IOException ex) {
-            throw new RuntimeException("Error when trying to write service representation to file", ex);
+            throw new VauntGenerationException("Error when trying to write service representation to file", ex);
         }
     }
 
     private Service serviceRepresentation(String packageRoot, String serviceName, Properties props) {
-        try {
-            return extractor.extractServiceRepresentation(packageRoot, serviceName, props);
-        } catch (JsonMappingException ex) {
-            throw new RuntimeException(
-                    String.format(
-                            "Error when trying to extract service representation: package=%s, service name=%s",
-                            packageRoot, serviceName), ex);
-        }
+        return extractor.extractServiceRepresentation(packageRoot, serviceName, props);
     }
 }
