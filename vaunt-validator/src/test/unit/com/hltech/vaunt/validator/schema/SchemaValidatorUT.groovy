@@ -2,6 +2,7 @@ package com.hltech.vaunt.validator.schema
 
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
+import com.hltech.vaunt.validator.VauntValidationException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -31,7 +32,7 @@ class SchemaValidatorUT extends Specification {
 
         then:
             response == null
-            def ex = thrown RuntimeException
+            def ex = thrown VauntValidationException
             ex.getMessage() == 'Exactly one validator should exist for consumer and provider'
     }
 }
