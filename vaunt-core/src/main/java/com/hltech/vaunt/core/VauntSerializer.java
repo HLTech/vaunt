@@ -12,7 +12,6 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.fasterxml.jackson.module.jsonSchema.customProperties.ValidationSchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import com.fasterxml.jackson.module.jsonSchema.factories.VisitorContext;
-import com.google.common.collect.Lists;
 import com.hltech.vaunt.core.domain.model.Contract;
 
 import java.io.File;
@@ -45,7 +44,7 @@ public class VauntSerializer {
             return mapper.writeValueAsString(schema);
         } catch (JsonProcessingException ex) {
             ex.printStackTrace();
-            return ""; //TODO: handle
+            throw new VauntSerializationException("Error during schema serialization", ex);
         }
     }
 
@@ -53,13 +52,16 @@ public class VauntSerializer {
         try {
             return mapper.readValue(contracts, new TypeReference<List<Contract>>(){});
         } catch (IOException ex) {
-            ex.printStackTrace();
-            return Lists.newArrayList(); //TODO: handle
+            throw new VauntSerializationException("Error during parsing contracts", ex);
         }
     }
 
-    public void serializeToFile(File resultFile, Object value) throws IOException {
-        mapper.writeValue(resultFile, value);
+    public void serializeToFile(File resultFile, Object value) {
+        try {
+            mapper.writeValue(resultFile, value);
+        } catch (IOException ex) {
+            throw new VauntSerializationException("Error during serialization to file", ex);
+        }
     }
 
     class VauntVisitorContext extends VisitorContext {
