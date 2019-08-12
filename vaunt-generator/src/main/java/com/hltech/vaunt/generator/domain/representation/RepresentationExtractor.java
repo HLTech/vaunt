@@ -9,6 +9,7 @@ import com.hltech.vaunt.core.domain.model.Capabilities;
 import com.hltech.vaunt.core.domain.model.Contract;
 import com.hltech.vaunt.core.domain.model.Expectations;
 import com.hltech.vaunt.core.domain.model.Service;
+import com.hltech.vaunt.generator.VauntGenerationException;
 import com.hltech.vaunt.generator.domain.representation.annotation.Consumer;
 import com.hltech.vaunt.generator.domain.representation.annotation.Consumers;
 import com.hltech.vaunt.generator.domain.representation.annotation.Provider;
@@ -26,8 +27,7 @@ public class RepresentationExtractor {
 
     private final VauntSerializer serializer;
 
-    public Service extractServiceRepresentation(String packageRoot, String serviceName, Properties props)
-            throws JsonMappingException {
+    public Service extractServiceRepresentation(String packageRoot, String serviceName, Properties props) {
         return new Service(serviceName,
                 extractCapabilities(packageRoot, props),
                 extractExpectations(packageRoot, props));
@@ -78,7 +78,7 @@ public class RepresentationExtractor {
                     props.getProperty(providerAnnotation.destinationName(), providerAnnotation.destinationName()),
                     body);
         } catch (JsonMappingException ex) {
-            throw new RuntimeException("Unable to extract contract for given provider", ex);
+            throw new VauntGenerationException("Unable to extract contract for given provider", ex);
         }
     }
 
@@ -95,7 +95,7 @@ public class RepresentationExtractor {
                     props.getProperty(consumerAnnotation.destinationName(), consumerAnnotation.destinationName()),
                     body);
         } catch (JsonMappingException ex) {
-            throw new RuntimeException("Unable to extract contract for given consumer", ex);
+            throw new VauntGenerationException("Unable to extract contract for given consumer", ex);
         }
     }
 }
