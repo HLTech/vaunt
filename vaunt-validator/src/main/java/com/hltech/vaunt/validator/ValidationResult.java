@@ -1,5 +1,6 @@
 package com.hltech.vaunt.validator;
 
+import com.google.common.collect.Lists;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,10 @@ public class ValidationResult {
 
     public static ValidationResult success(String name) {
         return new ValidationResult(name, OK, new ArrayList<>());
+    }
+
+    public static ValidationResult failure(String name, String error) {
+        return new ValidationResult(name, FAILED, Lists.newArrayList(error));
     }
 
     public static ValidationResult failure(String name, List<String> errors) {
