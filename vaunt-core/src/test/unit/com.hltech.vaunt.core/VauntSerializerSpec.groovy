@@ -26,7 +26,7 @@ class VauntSerializerSpec extends Specification {
 
     def 'Should correctly serialize schema'() {
         expect:
-            new JsonSlurper().parseText(serializer.serializeSchema(schema())) == new JsonSlurper().parseText(expectedResponse())
+            new JsonSlurper().parseText(serializer.serialize(schema())) == new JsonSlurper().parseText(expectedResponse())
     }
 
     def 'Should correctly generate schema (and should not use ref unless object is of JsonSchema type (threat of StackOverflow)'() {
@@ -36,10 +36,10 @@ class VauntSerializerSpec extends Specification {
 
     def 'Should correctly generate schema without redundant $ref element'() {
         given: 'seenSchemas in VisitorContext contain reference to object X'
-            serializer.serializeSchema(serializer.generateSchema(Message))
+            serializer.serialize(serializer.generateSchema(Message))
 
         expect: 'seenSchemas in VisitorContext should be cleaned and thus no $ref element for JSON for another message referring to object X'
-            new JsonSlurper().parseText(serializer.serializeSchema(serializer.generateSchema(AnotherMessage))) == new JsonSlurper().parseText(expectedAnotherResponse())
+            new JsonSlurper().parseText(serializer.serialize(serializer.generateSchema(AnotherMessage))) == new JsonSlurper().parseText(expectedAnotherResponse())
     }
 
     def 'Should correctly parse contracts'() {
