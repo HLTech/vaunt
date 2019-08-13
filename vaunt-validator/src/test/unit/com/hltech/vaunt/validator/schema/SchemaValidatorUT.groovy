@@ -2,7 +2,6 @@ package com.hltech.vaunt.validator.schema
 
 import com.fasterxml.jackson.module.jsonSchema.types.IntegerSchema
 import com.fasterxml.jackson.module.jsonSchema.types.StringSchema
-import com.hltech.vaunt.validator.VauntValidationException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -28,11 +27,11 @@ class SchemaValidatorUT extends Specification {
 
     def 'Should throw exception when no validator is found for given consumer and provider schemas'() {
         when:
-            def response = validator.validate(new StringSchema(), new IntegerSchema())
+            def errors = validator.validate(new StringSchema(id: 'a'), new IntegerSchema(id: 'b'))
 
         then:
-            response == null
-            def ex = thrown VauntValidationException
-            ex.getMessage() == 'Exactly one validator should exist for consumer and provider'
+            errors
+            errors.size() == 1
+            errors[0] == 'Consumer schema with id a and type StringSchema does not match provider schema with id b and type IntegerSchema'
     }
 }
