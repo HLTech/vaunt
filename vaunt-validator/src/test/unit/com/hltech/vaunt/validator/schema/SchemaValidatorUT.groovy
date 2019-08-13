@@ -14,12 +14,13 @@ class SchemaValidatorUT extends Specification {
 
     def 'Should contain all required validators'() {
         expect:
-            validator.schemaValidators.size() == 5
+            validator.schemaValidators.size() == 6
             validator.schemaValidators.any({it -> it.class == StringSchemaValidator})
             validator.schemaValidators.any({it -> it.class == ObjectSchemaValidator})
             validator.schemaValidators.any({it -> it.class == BooleanSchemaValidator})
             validator.schemaValidators.any({it -> it.class == IntegerSchemaValidator})
             validator.schemaValidators.any({it -> it.class == NumberSchemaValidator})
+            validator.schemaValidators.any({it -> it.class == ArraySchemaValidator})
     }
 
     def 'Should return a value when a validator is found for given consumer and provider schemas'() {
