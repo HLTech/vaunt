@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.hltech.vaunt.validator.schema.SchemaValidator.UNMATCHING_SCHEMA_TYPE;
+
 public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
-    private static final String UNMATCHING_SCHEMA_TYPE =
-            "Consumer schema with id %s and type %s does not match provider schema with id %s and type %s";
 
     @Override
     public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
