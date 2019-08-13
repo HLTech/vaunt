@@ -25,7 +25,8 @@ public class SchemaValidator {
                 new ObjectSchemaValidator(),
                 new BooleanSchemaValidator(),
                 new IntegerSchemaValidator(),
-                new NumberSchemaValidator()
+                new NumberSchemaValidator(),
+                new ArraySchemaValidator()
         ));
     }
 
