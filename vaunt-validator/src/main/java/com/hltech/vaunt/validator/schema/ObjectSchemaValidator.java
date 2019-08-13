@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.hltech.vaunt.validator.schema.SchemaValidator.UNMATCHING_SCHEMA_TYPE;
-
 public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
 
     @Override
@@ -72,14 +70,7 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
     }
 
     private List<String> validateProperty(JsonSchema consumerProperty, JsonSchema providerProperty) {
-        return consumerProperty.getClass() == providerProperty.getClass()
-                ? SchemaValidator.validate(consumerProperty, providerProperty)
-                : Lists.newArrayList(String.format(
-                        UNMATCHING_SCHEMA_TYPE,
-                        consumerProperty.getId(),
-                        consumerProperty.getClass().getSimpleName(),
-                        providerProperty.getId(),
-                        providerProperty.getClass().getSimpleName()));
+        return SchemaValidator.validate(consumerProperty, providerProperty);
     }
 
     private String mapToString(Map<String, JsonSchema> props) {
