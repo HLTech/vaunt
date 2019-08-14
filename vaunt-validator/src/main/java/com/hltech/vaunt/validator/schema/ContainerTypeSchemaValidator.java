@@ -22,7 +22,7 @@ public abstract class ContainerTypeSchemaValidator extends SimpleTypeSchemaValid
                     providerContainerTypeSchema.getEnums()));
         }
 
-        if (!equals(consumerContainerTypeSchema.getOneOf(), providerContainerTypeSchema.getOneOf())) {
+        if (!isEnumValid(consumerContainerTypeSchema.getOneOf(), providerContainerTypeSchema.getOneOf())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "oneOf",

@@ -15,12 +15,13 @@ class IntegerSchemaValidatorUT extends Specification {
     def validator = new IntegerSchemaValidator()
 
     def 'Should return no errors for the same IntegerSchemas'() {
-        given:
-            IntegerSchema consumerSchema = getSampleSchema()
-            IntegerSchema providerSchema = getSampleSchema()
-
         expect:
             validator.validate(consumerSchema, providerSchema).size() == 0
+
+        where:
+            consumerSchema      | providerSchema
+            new IntegerSchema() | getSampleSchema()
+            getSampleSchema()   | getSampleSchema()
     }
 
     @Unroll
@@ -97,7 +98,6 @@ class IntegerSchemaValidatorUT extends Specification {
                 maximum: 2,
                 minimum: 1,
                 multipleOf: 1,
-                enums: ['a', 'b'],
                 format: JsonValueFormat.DATE_TIME,
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],

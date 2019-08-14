@@ -16,7 +16,7 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
         SimpleTypeSchema consumerSimpleTypeSchema = consumerSchema.asSimpleTypeSchema();
         SimpleTypeSchema providerSimpleTypeSchema = providerSchema.asSimpleTypeSchema();
 
-        if (!equals(consumerSimpleTypeSchema.getDefault(), providerSimpleTypeSchema.getDefault())) {
+        if (!isValid(consumerSimpleTypeSchema.getDefault(), providerSimpleTypeSchema.getDefault())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "default",
@@ -24,7 +24,7 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
                     providerSimpleTypeSchema.getDefault()));
         }
 
-        if (!arraysEquals(consumerSimpleTypeSchema.getLinks(),
+        if (!isArrayValid(consumerSimpleTypeSchema.getLinks(),
                 providerSimpleTypeSchema.getLinks(),
                 SimpleTypeSchemaValidator::equalsLinkDescriptionObject)) {
 
@@ -33,7 +33,7 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
                     "links"));
         }
 
-        if (!equals(consumerSimpleTypeSchema.getPathStart(), providerSimpleTypeSchema.getPathStart())) {
+        if (!isValid(consumerSimpleTypeSchema.getPathStart(), providerSimpleTypeSchema.getPathStart())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "pathStart",
@@ -41,7 +41,7 @@ public abstract class SimpleTypeSchemaValidator extends JsonSchemaValidator {
                     providerSimpleTypeSchema.getPathStart()));
         }
 
-        if (!equals(consumerSimpleTypeSchema.getTitle(), providerSimpleTypeSchema.getTitle())) {
+        if (!isValid(consumerSimpleTypeSchema.getTitle(), providerSimpleTypeSchema.getTitle())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "title",

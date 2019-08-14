@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -20,7 +21,7 @@ public abstract class JsonSchemaValidator {
     public List<String> validate(JsonSchema consumerSchema, JsonSchema providerSchema) {
         List<String> errors = new ArrayList<>();
 
-        if (!equals(consumerSchema.get$ref(), providerSchema.get$ref())) {
+        if (!isValid(consumerSchema.get$ref(), providerSchema.get$ref())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "$ref",
@@ -28,7 +29,7 @@ public abstract class JsonSchemaValidator {
                     providerSchema.get$ref()));
         }
 
-        if (!equals(consumerSchema.get$schema(), providerSchema.get$schema())) {
+        if (!isValid(consumerSchema.get$schema(), providerSchema.get$schema())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "$schema",
@@ -36,7 +37,7 @@ public abstract class JsonSchemaValidator {
                     providerSchema.get$schema()));
         }
 
-        if (!arraysEquals(consumerSchema.getDisallow(), providerSchema.getDisallow(), Object::equals)) {
+        if (!isArrayValid(consumerSchema.getDisallow(), providerSchema.getDisallow(), Object::equals)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "disallow",
@@ -44,7 +45,7 @@ public abstract class JsonSchemaValidator {
                     jsonArrayToString(providerSchema.getDisallow())));
         }
 
-        if (!arraysEquals(consumerSchema.getExtends(), providerSchema.getExtends(), Object::equals)) {
+        if (!isArrayValid(consumerSchema.getExtends(), providerSchema.getExtends(), Object::equals)) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "extends",
@@ -60,7 +61,7 @@ public abstract class JsonSchemaValidator {
                     providerSchema.getRequired()));
         }
 
-        if (!equals(consumerSchema.getReadonly(), providerSchema.getReadonly())) {
+        if (!isValid(consumerSchema.getReadonly(), providerSchema.getReadonly())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "readonly",
@@ -68,7 +69,7 @@ public abstract class JsonSchemaValidator {
                     providerSchema.getReadonly()));
         }
 
-        if (!equals(consumerSchema.getDescription(), providerSchema.getDescription())) {
+        if (!isValid(consumerSchema.getDescription(), providerSchema.getDescription())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "description",
@@ -83,20 +84,21 @@ public abstract class JsonSchemaValidator {
         return schema.getRequired() != null && schema.getRequired();
     }
 
-    boolean equals(Object object1, Object object2) {
-        return Objects.equals(object1, object2);
+    boolean isValid(Object consumerObject, Object providerObject) {
+        return consumerObject == null || Objects.equals(consumerObject, providerObject);
     }
 
-    <T> boolean arraysEquals(T[] array1, T[] array2, BiPredicate<T, T> checker) {
-        if (array1 == null) {
-            return array2 == null;
+    <T> boolean isArrayValid(T[] consumerArray, T[] providerArray, BiPredicate<T, T> checker) {
+        if (consumerArray == null) {
+            return true;
         }
-        if (array2 == null) {
+
+        if (providerArray == null) {
             return false;
         }
 
-        return array1.length == array2.length && IntStream.range(0, array1.length)
-                .allMatch(i -> checker.test(array1[i], array2[i]));
+        return consumerArray.length == providerArray.length && IntStream.range(0, consumerArray.length)
+                .allMatch(i -> checker.test(consumerArray[i], providerArray[i]));
     }
 
     private String jsonArrayToString(JsonSchema[] array) {
@@ -111,7 +113,7 @@ public abstract class JsonSchemaValidator {
         return "JsonSchema(id=" + object.getId() + ")";
     }
 
-    boolean isEnumValid(Set<String> consumerEnums, Set<String> providerEnums) {
+    <T> boolean isEnumValid(Set<T> consumerEnums, Set<T> providerEnums) {
         if (representsString(consumerEnums) && representsEnum(providerEnums)) {
             return false;
         }
@@ -123,11 +125,23 @@ public abstract class JsonSchemaValidator {
         return true;
     }
 
-    private boolean representsEnum(Set<String> enums) {
+    <T, S> boolean isMapValid(Map<T, S> consumerMap, Map<T, S> providerMap) {
+        if (consumerMap.size() == 0) {
+            return true;
+        }
+
+        if (providerMap.size() == 0) {
+            return false;
+        }
+
+        return consumerMap.equals(providerMap);
+    }
+
+    private <T> boolean representsEnum(Set<T> enums) {
         return enums.size() > 0;
     }
 
-    private boolean representsString(Set<String> enums) {
+    private <T> boolean representsString(Set<T> enums) {
         return enums.size() == 0;
     }
 }

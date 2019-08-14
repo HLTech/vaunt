@@ -14,13 +14,14 @@ class ArraySchemaValidatorUT extends Specification {
     @Subject
     def validator = new ArraySchemaValidator()
 
-    def 'Should return no errors for the same ArraySchemas'() {
-        given:
-            ArraySchema consumerSchema = getSampleSchema()
-            ArraySchema providerSchema = getSampleSchema()
-
+    def 'Should return no errors for matching ArraySchemas'() {
         expect:
             validator.validate(consumerSchema, providerSchema).size() == 0
+
+        where:
+            consumerSchema    | providerSchema
+            new ArraySchema() | getSampleSchema()
+            getSampleSchema() | getSampleSchema()
     }
 
     @Unroll
@@ -60,10 +61,12 @@ class ArraySchemaValidatorUT extends Specification {
             def consumerSchema = new ArraySchema()
             consumerSchema.setId('a')
             consumerSchema.setEnums(consumerEnums)
+            consumerSchema.setOneOf(consumerEnums)
 
             def providerSchema = new ArraySchema()
             providerSchema.setId('a')
             providerSchema.setEnums(providerEnums)
+            providerSchema.setOneOf(providerEnums)
 
         expect:
             validator.validate(consumerSchema, providerSchema) == errors
@@ -71,9 +74,9 @@ class ArraySchemaValidatorUT extends Specification {
         where:
             consumerEnums                               | providerEnums                                | errors
             Sets.newHashSet('abc', 'def', 'geh')        | Sets.newHashSet('abc', 'def', 'geh', 'ijk')  | []
-            Sets.newHashSet('abc', 'def', 'geh', 'ijk') | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
+            Sets.newHashSet('abc', 'def', 'geh', 'ijk') | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums, 'Schema with id a has not matching oneOf - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
             Sets.newHashSet('abc', 'def', 'geh')        | new HashSet<String>()                        | []
-            new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
+            new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums, 'Schema with id a has not matching oneOf - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
     }
 
     def 'Should pass validation when provider schema is required and consumer is not'() {
@@ -95,8 +98,6 @@ class ArraySchemaValidatorUT extends Specification {
                 maxItems: 1,
                 minItems: 1,
                 uniqueItems: true,
-                enums: ['a', 'b'],
-                oneOf: ['a', 'b'],
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],
                 pathStart: 'ab',

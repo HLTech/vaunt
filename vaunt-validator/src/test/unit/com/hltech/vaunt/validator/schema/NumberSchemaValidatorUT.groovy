@@ -15,12 +15,13 @@ class NumberSchemaValidatorUT extends Specification {
     def validator = new NumberSchemaValidator()
 
     def 'Should return no errors for the same NumberSchemas'() {
-        given:
-            NumberSchema consumerSchema = getSampleSchema()
-            NumberSchema providerSchema = getSampleSchema()
-
         expect:
             validator.validate(consumerSchema, providerSchema).size() == 0
+
+        where:
+            consumerSchema     | providerSchema
+            new NumberSchema() | getSampleSchema()
+            getSampleSchema()  | getSampleSchema()
     }
 
     @Unroll
@@ -95,7 +96,6 @@ class NumberSchemaValidatorUT extends Specification {
                 maximum: 2,
                 minimum: 1,
                 multipleOf: 1,
-                enums: ['a', 'b'],
                 format: JsonValueFormat.DATE_TIME,
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],

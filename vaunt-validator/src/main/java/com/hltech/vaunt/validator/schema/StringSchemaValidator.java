@@ -14,7 +14,7 @@ public class StringSchemaValidator extends ValueTypeSchemaValidator {
         StringSchema consumerStringSchema = consumerSchema.asStringSchema();
         StringSchema providerStringSchema = providerSchema.asStringSchema();
 
-        if (!equals(consumerStringSchema.getMinLength(), providerStringSchema.getMinLength())) {
+        if (!isValid(consumerStringSchema.getMinLength(), providerStringSchema.getMinLength())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerStringSchema.getId(),
                     "minLength",
@@ -22,7 +22,7 @@ public class StringSchemaValidator extends ValueTypeSchemaValidator {
                     providerStringSchema.getMinLength()));
         }
 
-        if (!equals(consumerStringSchema.getMaxLength(), providerStringSchema.getMaxLength())) {
+        if (!isValid(consumerStringSchema.getMaxLength(), providerStringSchema.getMaxLength())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerStringSchema.getId(),
                     "maxLength",
@@ -30,7 +30,7 @@ public class StringSchemaValidator extends ValueTypeSchemaValidator {
                     providerStringSchema.getMaxLength()));
         }
 
-        if (!equals(consumerStringSchema.getPattern(), providerStringSchema.getPattern())) {
+        if (!isValid(consumerStringSchema.getPattern(), providerStringSchema.getPattern())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerStringSchema.getId(),
                     "pattern",

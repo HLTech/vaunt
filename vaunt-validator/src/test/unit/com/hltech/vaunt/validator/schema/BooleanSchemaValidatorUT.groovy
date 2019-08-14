@@ -15,12 +15,13 @@ class BooleanSchemaValidatorUT extends Specification {
     def validator = new BooleanSchemaValidator()
 
     def 'Should return no errors for the same BooleanSchemas'() {
-        given:
-            BooleanSchema consumerSchema = getSampleSchema()
-            BooleanSchema providerSchema = getSampleSchema()
-
         expect:
             validator.validate(consumerSchema, providerSchema).size() == 0
+
+        where:
+            consumerSchema      | providerSchema
+            new BooleanSchema() | getSampleSchema()
+            getSampleSchema()   | getSampleSchema()
     }
 
     @Unroll
@@ -85,7 +86,6 @@ class BooleanSchemaValidatorUT extends Specification {
 
     def getSampleSchema() {
         def schema = new BooleanSchema(
-                enums: ['a', 'b'],
                 format: JsonValueFormat.DATE_TIME,
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],

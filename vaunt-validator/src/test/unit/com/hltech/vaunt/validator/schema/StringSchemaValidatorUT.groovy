@@ -15,12 +15,13 @@ class StringSchemaValidatorUT extends Specification {
     def validator = new StringSchemaValidator()
 
     def 'Should return no errors for the same StringSchemas'() {
-        given:
-            StringSchema consumerSchema = getSampleSchema()
-            StringSchema providerSchema = getSampleSchema()
-
         expect:
             validator.validate(consumerSchema, providerSchema).size() == 0
+
+        where:
+            consumerSchema     | providerSchema
+            new StringSchema() | getSampleSchema()
+            getSampleSchema()  | getSampleSchema()
     }
 
     @Unroll
@@ -91,7 +92,6 @@ class StringSchemaValidatorUT extends Specification {
                 minLength: 1,
                 maxLength: 4,
                 pattern: 'ab',
-                enums: ['a', 'b'],
                 format: JsonValueFormat.DATE_TIME,
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],
