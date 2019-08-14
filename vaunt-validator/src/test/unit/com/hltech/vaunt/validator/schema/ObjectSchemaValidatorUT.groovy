@@ -15,12 +15,13 @@ class ObjectSchemaValidatorUT extends Specification {
     def validator = new ObjectSchemaValidator()
 
     def 'Should return no errors for the same ObjectSchemas'() {
-        given:
-            ObjectSchema consumerSchema = getSampleSchema()
-            ObjectSchema providerSchema = getSampleSchema()
-
         expect:
-            validator.validate(consumerSchema, providerSchema).size() == 0
+            validator.validate(consumerSchema, providerSchema) == []
+
+        where:
+            consumerSchema     | providerSchema
+            new ObjectSchema() | getSampleSchema()
+            getSampleSchema()  | getSampleSchema()
     }
 
     @Unroll
@@ -59,10 +60,12 @@ class ObjectSchemaValidatorUT extends Specification {
             def consumerSchema = new ObjectSchema()
             consumerSchema.setId('a')
             consumerSchema.setEnums(consumerEnums)
+            consumerSchema.setOneOf(consumerEnums)
 
             def providerSchema = new ObjectSchema()
             providerSchema.setId('a')
             providerSchema.setEnums(providerEnums)
+            providerSchema.setOneOf(providerEnums)
 
         expect:
             validator.validate(consumerSchema, providerSchema) == errors
@@ -70,9 +73,9 @@ class ObjectSchemaValidatorUT extends Specification {
         where:
             consumerEnums                               | providerEnums                                | errors
             Sets.newHashSet('abc', 'def', 'geh')        | Sets.newHashSet('abc', 'def', 'geh', 'ijk')  | []
-            Sets.newHashSet('abc', 'def', 'geh', 'ijk') | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
+            Sets.newHashSet('abc', 'def', 'geh', 'ijk') | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums, 'Schema with id a has not matching oneOf - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
             Sets.newHashSet('abc', 'def', 'geh')        | new HashSet<String>()                        | []
-            new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
+            new HashSet<String>()                       | Sets.newHashSet('abc', 'def', 'geh')         | ['Schema with id a has not matching enums - consumer: ' + consumerEnums + ', provider: ' + providerEnums, 'Schema with id a has not matching oneOf - consumer: ' + consumerEnums + ', provider: ' + providerEnums]
     }
 
     def 'Should return no errors when ObjectSchema of provider contains superset of consumer properties'() {
@@ -121,8 +124,6 @@ class ObjectSchemaValidatorUT extends Specification {
                 dependencies: ['ab': 'ab'],
                 patternProperties: ['ab': getSchemaWithExtended('id')],
                 properties: ['ab': getSchemaWithExtended('id')],
-                enums: ['a', 'b'],
-                oneOf: ['a', 'b'],
                 defaultdefault: 'ab',
                 links: [new LinkDescriptionObject(href: 'abc')],
                 pathStart: 'ab',

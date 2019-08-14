@@ -14,7 +14,7 @@ public class IntegerSchemaValidator extends NumberSchemaValidator {
         IntegerSchema consumerIntegerSchema = consumerSchema.asIntegerSchema();
         IntegerSchema providerIntegerSchema = providerSchema.asIntegerSchema();
 
-        if (!equals(consumerIntegerSchema.getDivisibleBy(), providerIntegerSchema.getDivisibleBy())) {
+        if (!isValid(consumerIntegerSchema.getDivisibleBy(), providerIntegerSchema.getDivisibleBy())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerIntegerSchema.getId(),
                     "divisibleBy",

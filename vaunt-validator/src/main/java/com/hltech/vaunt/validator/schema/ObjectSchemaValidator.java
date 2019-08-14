@@ -17,13 +17,13 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
         ObjectSchema consumerObjectSchema = consumerSchema.asObjectSchema();
         ObjectSchema providerObjectSchema = providerSchema.asObjectSchema();
 
-        if (!equals(consumerObjectSchema.getAdditionalProperties(), providerObjectSchema.getAdditionalProperties())) {
+        if (!isValid(consumerObjectSchema.getAdditionalProperties(), providerObjectSchema.getAdditionalProperties())) {
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerSchema.getId(),
                     "additionalProperties"));
         }
 
-        if (!equals(consumerObjectSchema.getDependencies(), providerObjectSchema.getDependencies())) {
+        if (!isMapValid(consumerObjectSchema.getDependencies(), providerObjectSchema.getDependencies())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "dependencies",
@@ -31,7 +31,7 @@ public class ObjectSchemaValidator extends ContainerTypeSchemaValidator {
                     providerObjectSchema.getDependencies()));
         }
 
-        if (!equals(consumerObjectSchema.getPatternProperties(), providerObjectSchema.getPatternProperties())) {
+        if (!isMapValid(consumerObjectSchema.getPatternProperties(), providerObjectSchema.getPatternProperties())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "patternProperties",

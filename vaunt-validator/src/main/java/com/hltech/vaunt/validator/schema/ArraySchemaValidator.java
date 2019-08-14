@@ -14,19 +14,19 @@ public class ArraySchemaValidator extends ContainerTypeSchemaValidator {
         ArraySchema consumerIntegerSchema = consumerSchema.asArraySchema();
         ArraySchema providerIntegerSchema = providerSchema.asArraySchema();
 
-        if (!equals(consumerIntegerSchema.getAdditionalItems(), providerIntegerSchema.getAdditionalItems())) {
+        if (!isValid(consumerIntegerSchema.getAdditionalItems(), providerIntegerSchema.getAdditionalItems())) {
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerIntegerSchema.getId(),
                     "additionalItems"));
         }
 
-        if (!equals(consumerIntegerSchema.getItems(), providerIntegerSchema.getItems())) {
+        if (!isValid(consumerIntegerSchema.getItems(), providerIntegerSchema.getItems())) {
             errors.add(String.format(ERROR_FORMAT_SHORT,
                     consumerIntegerSchema.getId(),
                     "items"));
         }
 
-        if (!equals(consumerIntegerSchema.getMaxItems(), providerIntegerSchema.getMaxItems())) {
+        if (!isValid(consumerIntegerSchema.getMaxItems(), providerIntegerSchema.getMaxItems())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerIntegerSchema.getId(),
                     "maxItems",
@@ -34,7 +34,7 @@ public class ArraySchemaValidator extends ContainerTypeSchemaValidator {
                     providerIntegerSchema.getMaxItems()));
         }
 
-        if (!equals(consumerIntegerSchema.getMinItems(), providerIntegerSchema.getMinItems())) {
+        if (!isValid(consumerIntegerSchema.getMinItems(), providerIntegerSchema.getMinItems())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerIntegerSchema.getId(),
                     "minItems",
@@ -42,7 +42,7 @@ public class ArraySchemaValidator extends ContainerTypeSchemaValidator {
                     providerIntegerSchema.getMinItems()));
         }
 
-        if (!equals(consumerIntegerSchema.getUniqueItems(), providerIntegerSchema.getUniqueItems())) {
+        if (!isValid(consumerIntegerSchema.getUniqueItems(), providerIntegerSchema.getUniqueItems())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerIntegerSchema.getId(),
                     "uniqueItems",

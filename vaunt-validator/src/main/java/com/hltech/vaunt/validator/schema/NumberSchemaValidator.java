@@ -14,7 +14,7 @@ public class NumberSchemaValidator extends ValueTypeSchemaValidator {
         NumberSchema consumerNumberSchema = consumerSchema.asNumberSchema();
         NumberSchema providerNumberSchema = providerSchema.asNumberSchema();
 
-        if (!equals(consumerNumberSchema.getExclusiveMaximum(), providerNumberSchema.getExclusiveMaximum())) {
+        if (!isValid(consumerNumberSchema.getExclusiveMaximum(), providerNumberSchema.getExclusiveMaximum())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerNumberSchema.getId(),
                     "exclusiveMaximum",
@@ -22,7 +22,7 @@ public class NumberSchemaValidator extends ValueTypeSchemaValidator {
                     providerNumberSchema.getExclusiveMaximum()));
         }
 
-        if (!equals(consumerNumberSchema.getExclusiveMinimum(), providerNumberSchema.getExclusiveMinimum())) {
+        if (!isValid(consumerNumberSchema.getExclusiveMinimum(), providerNumberSchema.getExclusiveMinimum())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerNumberSchema.getId(),
                     "exclusiveMinimum",
@@ -30,7 +30,7 @@ public class NumberSchemaValidator extends ValueTypeSchemaValidator {
                     providerNumberSchema.getExclusiveMinimum()));
         }
 
-        if (!equals(consumerNumberSchema.getMaximum(), providerNumberSchema.getMaximum())) {
+        if (!isValid(consumerNumberSchema.getMaximum(), providerNumberSchema.getMaximum())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerNumberSchema.getId(),
                     "maximum",
@@ -38,7 +38,7 @@ public class NumberSchemaValidator extends ValueTypeSchemaValidator {
                     providerNumberSchema.getMaximum()));
         }
 
-        if (!equals(consumerNumberSchema.getMinimum(), providerNumberSchema.getMinimum())) {
+        if (!isValid(consumerNumberSchema.getMinimum(), providerNumberSchema.getMinimum())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerNumberSchema.getId(),
                     "minimum",
@@ -46,7 +46,7 @@ public class NumberSchemaValidator extends ValueTypeSchemaValidator {
                     providerNumberSchema.getMinimum()));
         }
 
-        if (!equals(consumerNumberSchema.getMultipleOf(), providerNumberSchema.getMultipleOf())) {
+        if (!isValid(consumerNumberSchema.getMultipleOf(), providerNumberSchema.getMultipleOf())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerNumberSchema.getId(),
                     "multipleOf",

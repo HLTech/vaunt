@@ -22,7 +22,7 @@ public abstract class ValueTypeSchemaValidator extends SimpleTypeSchemaValidator
                     providerValueTypeSchema.getEnums()));
         }
 
-        if (!equals(consumerValueTypeSchema.getFormat(), providerValueTypeSchema.getFormat())) {
+        if (!isValid(consumerValueTypeSchema.getFormat(), providerValueTypeSchema.getFormat())) {
             errors.add(String.format(ERROR_FORMAT,
                     consumerSchema.getId(),
                     "format",
