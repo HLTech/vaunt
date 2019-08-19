@@ -60,7 +60,7 @@ in producer and @JsonIgnoreProperties(ignoreUnknown = true) (or equivalent) in c
 
 Vaunt-Generator does not use "ref" (i. e. uses inlining) with the exception of JsonSchema (threat of StackOverflow).
 
-Currently Vaunt Validator supports BooleanSchema, IntegerSchema, NumberSchema, ObjectSchema, StringSchema.
+Currently Vaunt Validator supports BooleanSchema, IntegerSchema, NumberSchema, ObjectSchema, StringSchema, ArraySchema.
 
 Vaunt validator validates in order how contract is specified i.e. when expectations are verified and no capabilities 
 match them, then in results the most similar expectations and corresponding errors are displayed
